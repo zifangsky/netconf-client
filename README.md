@@ -65,11 +65,11 @@ SYNOPSIS
 ```Java
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
-import net.juniper.netconf.NetconfException;
+import net.juniper.netconf.core.NetconfException;
 import org.xml.sax.SAXException;
 
-import net.juniper.netconf.XML;
-import net.juniper.netconf.Device;
+import net.juniper.netconf.core.XML;
+import net.juniper.netconf.core.Device;
 
 public class ShowInterfaces {
     public static void main(String args[]) throws NetconfException,

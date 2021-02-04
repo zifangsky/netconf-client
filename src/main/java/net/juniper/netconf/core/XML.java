@@ -6,7 +6,7 @@
 
  */
 
-package net.juniper.netconf;
+package net.juniper.netconf.core;
 
 import com.google.common.base.Preconditions;
 import org.apache.xml.serializer.OutputPropertiesFactory;
@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import static net.juniper.netconf.NetconfConstants.LF;
+import static net.juniper.netconf.core.NetconfConstants.LF;
 
 /**
  * An <code>XML</code> object represents XML content and provides methods to
@@ -48,15 +48,16 @@ public class XML {
     private final Element activeElement;
     private final Document ownerDoc;
 
-    protected XML(Element active) {
+    public XML(Element active) {
         this.activeElement = active;
         ownerDoc = active.getOwnerDocument();
     }
 
     private String trim(String str) {
         String st = str.trim();
-        if (st.startsWith(LF))
+        if (st.startsWith(LF)) {
             st = st.substring(st.indexOf(LF) + 1);
+        }
         if (st.endsWith(LF)) {
             st = st.substring(0, st.lastIndexOf(LF));
         }
@@ -357,8 +358,9 @@ public class XML {
                      * This will fetch me the required element.
                      */
                     String n2nString = null;
-                    if (k<list.size()-1)
+                    if (k<list.size()-1) {
                         n2nString = list.get(k+1);
+                    }
                     if (n2nString != null && n2nString.contains("~")) {
                         /* Since the n2n element is a filter based on text
                          * value( decided by '~')
@@ -382,8 +384,9 @@ public class XML {
                                 break;
                             }
                         }
-                        if (!nextElementFound)
+                        if (!nextElementFound) {
                             return null;
+                        }
                     } else {
                         nextElement = (Element)nextElementList.item(0);
                     }
@@ -442,8 +445,9 @@ public class XML {
                      * This will fetch me the required element.
                      */
                     String n2nString = null;
-                    if (k<list.size()-1)
+                    if (k<list.size()-1) {
                         n2nString = list.get(k+1);
+                    }
                     if (n2nString != null && n2nString.contains("~")) {
                         /* Since the n2n element is a filter based on text value
                          * ( decided by '~')
@@ -467,8 +471,9 @@ public class XML {
                                 break;
                             }
                         }
-                        if (!nextElementFound)
+                        if (!nextElementFound) {
                             return null;
+                        }
                     } else {
                         nextElement = (Element)nextElementList.item(0);
                     }
@@ -501,6 +506,7 @@ public class XML {
      * Get the xml string of the XML object.
      * @return The XML data as a string
      */
+    @Override
     public String toString() {
         String str;
         try {

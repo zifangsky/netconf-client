@@ -5,7 +5,7 @@
  Use is subject to license terms.
 */
 
-package net.juniper.netconf;
+package net.juniper.netconf.core;
 
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.ChannelSubsystem;
@@ -356,8 +356,9 @@ public class Device implements AutoCloseable {
                 } catch (Exception e) {
                     throw new NetconfException(e.getMessage());
                 }
-                if (line == null || line.equals(NetconfConstants.EMPTY_LINE))
+                if (line == null || line.equals(NetconfConstants.EMPTY_LINE)) {
                     break;
+                }
                 reply.append(line).append(NetconfConstants.LF);
             }
             return reply.toString();
@@ -730,7 +731,7 @@ public class Device implements AutoCloseable {
     /**
      * Commit the candidate configuration.
      *
-     * @throws net.juniper.netconf.CommitException if there was an error committing the configuration.
+     * @throws CommitException if there was an error committing the configuration.
      * @throws java.io.IOException                 If there are errors communicating with the netconf server.
      * @throws org.xml.sax.SAXException            If there are errors parsing the XML reply.
      */
@@ -748,7 +749,7 @@ public class Device implements AutoCloseable {
      *
      * @param seconds Time in seconds, after which the previous active configuration
      *                is reverted back to.
-     * @throws net.juniper.netconf.CommitException if there was an error committing the configuration.
+     * @throws CommitException if there was an error committing the configuration.
      * @throws java.io.IOException                 If there are errors communicating with the netconf server.
      * @throws org.xml.sax.SAXException            If there are errors parsing the XML reply.
      */
@@ -794,7 +795,7 @@ public class Device implements AutoCloseable {
      *                   services/&gt;&lt;/system&gt;&lt;/configuration/&gt;"
      *                   will load 'ftp' under the 'systems services' hierarchy.
      * @param loadType   You can choose "merge" or "replace" as the loadType.
-     * @throws net.juniper.netconf.CommitException if there was an error committing the configuration.
+     * @throws CommitException if there was an error committing the configuration.
      * @throws java.io.IOException                 If there are errors communicating with the netconf server.
      * @throws org.xml.sax.SAXException            If there are errors parsing the XML reply.
      */

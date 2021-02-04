@@ -1,108 +1,56 @@
 package net.juniper.netconf;
 
-import com.jcraft.jsch.ChannelSubsystem;
-import com.jcraft.jsch.HostKeyRepository;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Session;
+import net.juniper.netconf.core.Device;
+import net.juniper.netconf.core.NetconfException;
+import net.juniper.netconf.core.XML;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
 
 
 @Category(Test.class)
 public class DeviceTest {
 
-    private static final String TEST_HOSTNAME = "hostname";
-    private static final String TEST_USERNAME = "username";
-    private static final String TEST_PASSWORD = "password";
+    private static final String TEST_HOSTNAME = "127.0.0.1";
+    private static final String TEST_USERNAME = "netconf";
+    private static final String TEST_PASSWORD = "admin123456";
     private static final int DEFAULT_NETCONF_PORT = 830;
-    private static final int DEFAULT_TIMEOUT = 5000;
-    public static final String SUBSYSTEM = "subsystem";
 
     private Device createTestDevice() throws NetconfException {
         return Device.builder()
                 .hostName(TEST_HOSTNAME)
                 .userName(TEST_USERNAME)
                 .password(TEST_PASSWORD)
+                .port(DEFAULT_NETCONF_PORT)
                 .strictHostKeyChecking(false)
                 .build();
     }
 
+    /**
+     * 测试连接情况
+     */
     @Test
     public void GIVEN_requiredParameters_THEN_createDevice() throws NetconfException {
         Device device = createTestDevice();
-        assertThat(device.getHostName()).isEqualTo(TEST_HOSTNAME);
-        assertThat(device.getUserName()).isEqualTo(TEST_USERNAME);
-        assertThat(device.getPassword()).isEqualTo(TEST_PASSWORD);
-        assertThat(device.getPort()).isEqualTo(DEFAULT_NETCONF_PORT);
-        assertThat(device.getConnectionTimeout()).isEqualTo(DEFAULT_TIMEOUT);
-        assertThat(device.getCommandTimeout()).isEqualTo(DEFAULT_TIMEOUT);
-        assertFalse(device.isKeyBasedAuthentication());
-        assertNull(device.getPemKeyFile());
-        assertNull(device.getHostKeysFileName());
+        device.connect();
+        System.out.println(device.getSessionId() + ": " + device.isConnected());
     }
 
+    /**
+     * 查看安全策略配置
+     */
     @Test
-    public void GIVEN_sshAvailableNetconfNot_THEN_closeDevice() throws Exception {
-        JSch sshClient = mock(JSch.class);
-        Session session = mock(Session.class);
-        ChannelSubsystem channel = mock(ChannelSubsystem.class);
-        when(channel.isConnected()).thenReturn(false);
+    public void executeRPC() throws Exception {
+        Device device = createTestDevice();
+        device.connect();
 
-        when(session.isConnected()).thenReturn(true);
-        when(session.openChannel(eq(SUBSYSTEM))).thenReturn(channel);
-        doThrow(new JSchException("failed to send channel request")).when(channel).connect(eq(DEFAULT_TIMEOUT));
-
-        when(sshClient.getSession(eq(TEST_USERNAME), eq(TEST_HOSTNAME), eq(DEFAULT_NETCONF_PORT))).thenReturn(session);
-
-        try (Device device = Device.builder()
-                .sshClient(sshClient)
-                .hostName(TEST_HOSTNAME)
-                .userName(TEST_USERNAME)
-                .password(TEST_PASSWORD)
-                .strictHostKeyChecking(false)
-                .build()) {
-            device.connect();
-        } catch (NetconfException e) {
-        }
-
-        verify(channel).connect(eq(DEFAULT_TIMEOUT));
-        verify(channel).setSubsystem(anyString());
-        verify(channel).getInputStream();
-        verify(channel).getOutputStream();
-        verify(channel).isConnected();
-
-        verify(session).disconnect();
-        verify(session).openChannel(eq(SUBSYSTEM));
-        verify(session, times(2)).isConnected();
-        verify(session).getTimeout();
-        verify(session).connect(eq(DEFAULT_TIMEOUT));
-        verify(session).setTimeout(eq(DEFAULT_TIMEOUT));
-        verify(session, times(2)).setConfig(anyString(), anyString());
-        verify(session).setPassword(anyString());
-
-        verify(sshClient).getSession(eq(TEST_USERNAME), eq(TEST_HOSTNAME), eq(DEFAULT_NETCONF_PORT));
-        verify(sshClient).getHostKeyRepository();
-        verify(sshClient).setHostKeyRepository(any(HostKeyRepository.class));
-
-        verifyNoMoreInteractions(channel);
-        verifyNoMoreInteractions(session);
-        verifyNoMoreInteractions(sshClient);
+        XML xml = device.executeRPC("<get-config><source><running/></source><filter type=\"subtree\"><sec-policy xmlns=\"urn:huawei:params:xml:ns:yang:huawei-security-policy\"></sec-policy></filter></get-config>");
+        System.out.println(xml.toString());
     }
+
+
 
     @Test
     public void GIVEN_newDevice_WHEN_withNullUserName_THEN_throwsException() {

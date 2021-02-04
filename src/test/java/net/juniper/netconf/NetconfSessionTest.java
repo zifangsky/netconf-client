@@ -2,6 +2,9 @@ package net.juniper.netconf;
 
 import com.jcraft.jsch.Channel;
 import lombok.extern.slf4j.Slf4j;
+import net.juniper.netconf.core.NetconfConstants;
+import net.juniper.netconf.core.NetconfException;
+import net.juniper.netconf.core.NetconfSession;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;

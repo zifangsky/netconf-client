@@ -6,7 +6,7 @@
 
 */
 
-package net.juniper.netconf;
+package net.juniper.netconf.core;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Charsets;
@@ -79,12 +79,12 @@ public class NetconfSession {
     private static final String RUNNING_CONFIG = "running";
     private static final String NETCONF_SYNTAX_ERROR_MSG_FROM_DEVICE = "netconf error: syntax error";
 
-    NetconfSession(Channel netconfChannel, int timeout, String hello,
+    public NetconfSession(Channel netconfChannel, int timeout, String hello,
                    DocumentBuilder builder) throws IOException {
         this(netconfChannel, timeout, timeout, hello, builder);
     }
 
-    NetconfSession(Channel netconfChannel, int connectionTimeout, int commandTimeout,
+    public NetconfSession(Channel netconfChannel, int connectionTimeout, int commandTimeout,
                    String hello,
                    DocumentBuilder builder) throws IOException {
 
@@ -119,7 +119,7 @@ public class NetconfSession {
     }
 
     @VisibleForTesting
-    String getRpcReply(String rpc) throws IOException {
+    public String getRpcReply(String rpc) throws IOException {
         // write the rpc to the device
         sendRpcRequest(rpc);
 
@@ -132,12 +132,15 @@ public class NetconfSession {
         while ((promptPosition = rpcReply.indexOf(NetconfConstants.DEVICE_PROMPT)) < 0 &&
                 (timeoutNotExceeded = (TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime) < commandTimeout))) {
             int charsRead = in.read(buffer, 0, buffer.length);
-            if (charsRead < 0) throw new NetconfException("Input Stream has been closed during reading.");
+            if (charsRead < 0) {
+                throw new NetconfException("Input Stream has been closed during reading.");
+            }
             rpcReply.append(buffer, 0, charsRead);
         }
 
-        if (!timeoutNotExceeded)
+        if (!timeoutNotExceeded) {
             throw new SocketTimeoutException("Command timeout limit was exceeded: " + commandTimeout);
+        }
         // fixing the rpc reply by removing device prompt
         log.debug("Received Netconf RPC-Reply\n{}", rpcReply);
         rpcReply.setLength(promptPosition);
@@ -176,11 +179,13 @@ public class NetconfSession {
             boolean useDefaultNamespace = true;
             for (Map.Entry<String, String> attribute : rpcAttrMap.entrySet()) {
                 attributes.append(String.format(" %1s=\"%2s\"", attribute.getKey(), attribute.getValue()));
-                if ("xmlns".equals(attribute.getKey()))
+                if ("xmlns".equals(attribute.getKey())) {
                     useDefaultNamespace = false;
+                }
             }
-            if (useDefaultNamespace)
+            if (useDefaultNamespace) {
                 attributes.append(" xmlns=\"" + NetconfConstants.URN_XML_NS_NETCONF_BASE_1_0 + "\"");
+            }
             rpcAttributes = attributes.toString();
         }
         return rpcAttributes;
@@ -220,8 +225,9 @@ public class NetconfSession {
                 "</rpc>" +
                 NetconfConstants.DEVICE_PROMPT;
         lastRpcReply = getRpcReply(rpc);
-        if (hasError() || !isOK())
+        if (hasError() || !isOK()) {
             throw new LoadException("Load operation returned error.");
+        }
     }
 
     /**
@@ -257,8 +263,9 @@ public class NetconfSession {
                 "</rpc>" +
                 NetconfConstants.DEVICE_PROMPT;
         lastRpcReply = getRpcReply(rpc);
-        if (hasError() || !isOK())
+        if (hasError() || !isOK()) {
             throw new LoadException("Load operation returned error");
+        }
     }
 
     private String getConfig(String configTree) throws IOException {
@@ -365,16 +372,17 @@ public class NetconfSession {
      * @throws IllegalArgumentException if null is passed in as the rpcContent.
      */
     @VisibleForTesting
-    static String fixupRpc(@NonNull String rpcContent) throws IllegalArgumentException {
+    public static String fixupRpc(@NonNull String rpcContent) throws IllegalArgumentException {
         if (rpcContent == null) {
             throw new IllegalArgumentException("Null RPC");
         }
         rpcContent = rpcContent.trim();
         if (!rpcContent.startsWith("<rpc>") && !rpcContent.equals("<rpc/>")) {
-            if (rpcContent.startsWith("<"))
+            if (rpcContent.startsWith("<")) {
                 rpcContent = "<rpc>" + rpcContent + "</rpc>";
-            else
+            } else {
                 rpcContent = "<rpc>" + "<" + rpcContent + "/>" + "</rpc>";
+            }
         }
         return rpcContent + NetconfConstants.DEVICE_PROMPT;
     }
@@ -440,11 +448,13 @@ public class NetconfSession {
      */
     public String getSessionId() {
         String[] split = serverCapability.split("<session-id>");
-        if (split.length != 2)
+        if (split.length != 2) {
             return null;
+        }
         String[] idSplit = split[1].split("</session-id>");
-        if (idSplit.length != 2)
+        if (idSplit.length != 2) {
             return null;
+        }
         return idSplit[0];
     }
 
@@ -471,8 +481,9 @@ public class NetconfSession {
      * @throws java.io.IOException      If there are issues communicating with the netconf server.
      */
     public boolean hasError() throws SAXException, IOException {
-        if (lastRpcReply == null || !(lastRpcReply.contains("<rpc-error>")))
+        if (lastRpcReply == null || !(lastRpcReply.contains("<rpc-error>"))) {
             return false;
+        }
         String errorSeverity = parseForErrors(lastRpcReply);
         return errorSeverity != null && errorSeverity.equals("error");
     }
@@ -493,8 +504,9 @@ public class NetconfSession {
      * @throws java.io.IOException      If there are issues communicating with the netconf server.
      */
     public boolean hasWarning() throws SAXException, IOException {
-        if (lastRpcReply == null || !(lastRpcReply.contains("<rpc-error>")))
+        if (lastRpcReply == null || !(lastRpcReply.contains("<rpc-error>"))) {
             return false;
+        }
         String errorSeverity = parseForErrors(lastRpcReply);
         return errorSeverity != null && errorSeverity.equals("warning");
     }
@@ -570,8 +582,9 @@ public class NetconfSession {
                 "</load-configuration>" +
                 "</rpc>";
         lastRpcReply = getRpcReply(rpc);
-        if (hasError() || !isOK())
+        if (hasError() || !isOK()) {
             throw new LoadException("Load operation returned error");
+        }
     }
 
     /**
@@ -597,9 +610,10 @@ public class NetconfSession {
      */
     private void validateLoadType(String loadType) throws IllegalArgumentException {
         if (loadType == null || (!loadType.equals("merge") &&
-                !loadType.equals("replace")))
+                !loadType.equals("replace"))) {
             throw new IllegalArgumentException("'loadType' argument must be " +
                     "merge|replace");
+        }
     }
 
     /**
@@ -704,8 +718,9 @@ public class NetconfSession {
                 "</rpc>" +
                 NetconfConstants.DEVICE_PROMPT;
         lastRpcReply = getRpcReply(rpc);
-        if (hasError() || !isOK())
+        if (hasError() || !isOK()) {
             throw new CommitException("Commit operation returned error.");
+        }
     }
 
     /**
@@ -726,15 +741,16 @@ public class NetconfSession {
                 "</rpc>" +
                 NetconfConstants.DEVICE_PROMPT;
         lastRpcReply = getRpcReply(rpc);
-        if (hasError() || !isOK())
+        if (hasError() || !isOK()) {
             throw new CommitException("Commit operation returned " +
                     "error.");
+        }
     }
 
     /**
      * Commit the candidate configuration and rebuild the config database.
      *
-     * @throws net.juniper.netconf.CommitException if there is an error committing the config.
+     * @throws CommitException if there is an error committing the config.
      * @throws java.io.IOException                 If there are errors communicating with the netconf server.
      * @throws org.xml.sax.SAXException            If there are errors parsing the XML reply.
      */
@@ -746,8 +762,9 @@ public class NetconfSession {
                 "</rpc>" +
                 NetconfConstants.DEVICE_PROMPT;
         lastRpcReply = getRpcReply(rpc);
-        if (hasError() || !isOK())
+        if (hasError() || !isOK()) {
             throw new CommitException("Commit operation returned error.");
+        }
     }
 
 
@@ -861,10 +878,11 @@ public class NetconfSession {
         List<String> tags = new ArrayList<>();
         tags.add("output");
         String output = xmlReply.findValue(tags);
-        if (output != null)
+        if (output != null) {
             return output;
-        else
+        } else {
             return rpcReply;
+        }
     }
 
     /**
@@ -898,10 +916,11 @@ public class NetconfSession {
         StringBuilder rpc = new StringBuilder();
         rpc.append("<rpc>");
         rpc.append("<open-configuration>");
-        if (mode.startsWith("<"))
+        if (mode.startsWith("<")) {
             rpc.append(mode);
-        else
+        } else {
             rpc.append("<").append(mode).append("/>");
+        }
         rpc.append("</open-configuration>");
         rpc.append("</rpc>");
         rpc.append(NetconfConstants.DEVICE_PROMPT);

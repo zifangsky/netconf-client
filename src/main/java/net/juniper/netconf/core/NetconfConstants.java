@@ -1,4 +1,4 @@
-package net.juniper.netconf;
+package net.juniper.netconf.core;
 
 /**
  * @author Jonas Glass

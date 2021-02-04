@@ -1,5 +1,6 @@
 package net.juniper.netconf;
 
+import net.juniper.netconf.core.XML;
 import org.junit.Test;
 
 import javax.xml.parsers.DocumentBuilder;

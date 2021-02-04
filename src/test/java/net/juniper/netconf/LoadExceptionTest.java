@@ -1,7 +1,9 @@
 package net.juniper.netconf;
 
+import net.juniper.netconf.core.LoadException;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @Category(Test.class)

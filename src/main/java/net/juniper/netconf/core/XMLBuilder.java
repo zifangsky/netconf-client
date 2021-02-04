@@ -6,13 +6,16 @@
 
 */
 
-package net.juniper.netconf;
+package net.juniper.netconf.core;
 
-import java.util.List;
-import javax.xml.parsers.*;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.util.List;
 
 /**
  * An <code>XMLBuilder</code> is used to create an XML object.This is useful to 
@@ -141,8 +144,9 @@ public class XMLBuilder {
      * @return XML object.
      */
     public XML createNewConfig(List<String> elementList) {
-        if (elementList.size() == 0)
+        if (elementList.size() == 0) {
             return null;
+        }
         Document doc = impl.createDocument(null, "configuration", null);
         Element rootElement = doc.getDocumentElement();
         Element elementLevelLast = doc.createElement(elementList.
@@ -254,8 +258,9 @@ public class XMLBuilder {
      * @return XML object.
      */
     public XML createNewRPC(List<String> elementList) {
-        if (elementList.size() == 0)
+        if (elementList.size() == 0) {
             return null;
+        }
         Document doc = impl.createDocument(null, "rpc", null);
         Element rootElement = doc.getDocumentElement();
         Element elementLevelLast = doc.createElement(elementList.
@@ -358,13 +363,15 @@ public class XMLBuilder {
      * @return XML object.
      */
     public XML createNewXML(List<String> elementList) {
-        if (elementList.size() == 0)
+        if (elementList.size() == 0) {
             return null;
+        }
         String elementLevelOne = elementList.get(0);
         Document doc = impl.createDocument(null, elementLevelOne, null);
         Element rootElement = doc.getDocumentElement();
-        if (elementList.size() == 1)
+        if (elementList.size() == 1) {
             return new XML(rootElement);
+        }
         Element elementLevelLast = doc.createElement(elementList.
                 get(elementList.size()-1));
         Element last = elementLevelLast;

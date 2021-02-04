@@ -1,5 +1,6 @@
 package net.juniper.netconf;
 
+import net.juniper.netconf.core.CommitException;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 

@@ -6,7 +6,7 @@
 
 */
 
-package net.juniper.netconf;
+package net.juniper.netconf.core;
 
 import java.io.IOException;
 
@@ -15,7 +15,7 @@ import java.io.IOException;
  */
 public class LoadException extends IOException {
 
-    LoadException(String msg) {
+    public LoadException(String msg) {
         super(msg);
     }
 }

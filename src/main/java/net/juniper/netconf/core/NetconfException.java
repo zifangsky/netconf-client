@@ -6,7 +6,7 @@
 
 */
 
-package net.juniper.netconf;
+package net.juniper.netconf.core;
 
 import java.io.IOException;
 

@@ -6,7 +6,7 @@
 
 */
 
-package net.juniper.netconf;
+package net.juniper.netconf.core;
 
 import java.io.IOException;
 
@@ -14,7 +14,7 @@ import java.io.IOException;
  * Describes exceptions related to commit operation
  */
 public class CommitException extends IOException {
-    CommitException(String msg) {
+    public CommitException(String msg) {
         super(msg);
     }
 }
