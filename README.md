@@ -65,7 +65,7 @@ SYNOPSIS
 ```Java
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
-import net.juniper.netconf.core.NetconfException;
+import net.juniper.netconf.core.exception.NetconfException;
 import org.xml.sax.SAXException;
 
 import net.juniper.netconf.core.XML;

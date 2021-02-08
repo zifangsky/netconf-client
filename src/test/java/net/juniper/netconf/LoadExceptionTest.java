@@ -1,6 +1,6 @@
 package net.juniper.netconf;
 
-import net.juniper.netconf.core.LoadException;
+import net.juniper.netconf.core.exception.LoadException;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 

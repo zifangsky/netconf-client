@@ -7,15 +7,14 @@ import lombok.Data;
  * 安全策略的数据域
  *
  * @author zifangsky
- * @date 2/4/21
+ * @date 21/2/4
  * @since 1.0.0
  */
 @Data
-public class SecPolicyData<T> {
-
+public class SecPolicyData {
     /**
      * response body
      */
-    @JacksonXmlProperty(localName = "sec-policy", namespace = "urn:huawei:params:xml:ns:yang:huawei-security-policy")
-    private T secPolicy;
+    @JacksonXmlProperty(localName = "sec-policy")
+    private SecPolicy secPolicy;
 }
