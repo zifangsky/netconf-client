@@ -12,6 +12,10 @@ import java.io.IOException;
 
 /**
  * Describes exceptions related to establishing Netconf session.
+ *
+ * @author zifangsky
+ * @date 2021/2/8
+ * @since 1.1.0
  */
 public class NetconfException extends IOException {
     public NetconfException(String msg) {

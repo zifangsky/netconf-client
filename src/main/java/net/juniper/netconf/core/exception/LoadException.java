@@ -12,6 +12,10 @@ import java.io.IOException;
 
 /** 
  * Describes exceptions related to load operation
+ *
+ * @author zifangsky
+ * @date 2021/2/8
+ * @since 1.1.0
  */
 public class LoadException extends IOException {
 

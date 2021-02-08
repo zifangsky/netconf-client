@@ -45,6 +45,10 @@ import java.util.List;
  * <li>Finally, one must close the Device and release resources with the
  * {@link #close() close()} method.</li>
  * </ol>
+ *
+ * @author zifangsky
+ * @date 2021/2/8
+ * @since 1.1.0
  */
 @Slf4j
 @Getter
@@ -128,7 +132,10 @@ public class Device implements AutoCloseable {
      * @throws NetconfException if there are issues communicating with the Netconf server.
      */
     public void connect() throws NetconfException {
-        if (hostName == null || userName == null || (password == null && pemKeyFile == null)) {
+        if (hostName == null || userName == null) {
+            throw new NetconfException("Login parameters of Device can't be null.");
+        }
+        if (password == null && pemKeyFile == null) {
             throw new NetconfException("Login parameters of Device can't be null.");
         }
 

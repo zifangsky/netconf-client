@@ -41,6 +41,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  * object.</li>
  * <li>perform operations on the NetconfSession object.</li>
  * </ol>
+ *
+ * @author zifangsky
+ * @date 2021/2/8
+ * @since 1.1.0
  */
 @Slf4j
 public class NetconfSession {
@@ -52,6 +56,18 @@ public class NetconfSession {
      * 普通rpc返回报文的标识
      */
     public static final String COMMON_RPC_REPLY_FLAG = "<rpc-reply";
+    /**
+     * XML一个节点开始的标识
+     */
+    public static final String XML_START_FLAG = "<";
+    /**
+     * <rpc>报文的起始标识
+     */
+    public static final String RPC_START_FLAG = "<rpc>";
+    /**
+     * <rpc>报文为空的标识
+     */
+    public static final String RPC_NULL_TREE_FLAG = "<rpc/>";
 
     private InputStream stdInStreamFromDevice;
     private OutputStream stdOutStreamToDevice;
@@ -83,7 +99,6 @@ public class NetconfSession {
      * 上一条命令是否包含错误
      */
     private boolean lastReplyHasWarning;
-
     /**
      * 手动指定<rpc>层级的属性
      */
@@ -92,9 +107,13 @@ public class NetconfSession {
      * 缓存<rpc>层级的属性
      */
     private String rpcAttributes;
-
+    /**
+     * 消息ID
+     */
     private AtomicInteger messageId = new AtomicInteger(0);
-    // Bigger than inner buffer in BufferReader class
+    /**
+     * Bigger than inner buffer in BufferReader class
+     */
     public static final int BUFFER_SIZE = 9 * 1024;
 
     public NetconfSession(Channel netConfChannel, int timeout, List<String> netconfCapabilities) throws IOException {
@@ -133,14 +152,6 @@ public class NetconfSession {
      * @return Session ID as a string.
      */
     public String getSessionId() {
-//        String[] split = this.serverCapability.split("<session-id>");
-//        if (split.length != 2) {
-//            return null;
-//        }
-//        String[] idSplit = split[1].split("</session-id>");
-//        if (idSplit.length != 2) {
-//            return null;
-//        }
         return this.sessionId;
     }
 
@@ -281,11 +292,11 @@ public class NetconfSession {
     /**
      * 获取rpc层级的属性，如果没有手动指定，则设置一个默认的xmlns
      */
-    private String getRpcAttributes() {
+    private synchronized String getRpcAttributes() {
         if(rpcAttributes == null) {
             StringBuilder attributes = new StringBuilder();
             boolean useDefaultNamespace = true;
-            for (Map.Entry<String, String> attribute : rpcAttrMap.entrySet()) {
+            for (Map.Entry<String, String> attribute : this.rpcAttrMap.entrySet()) {
                 attributes.append(String.format(" %1s=\"%2s\"", attribute.getKey(), attribute.getValue()));
                 if ("xmlns".equals(attribute.getKey())) {
                     useDefaultNamespace = false;
@@ -309,8 +320,8 @@ public class NetconfSession {
         rpcContent = rpcContent.trim();
 
         //如果不包含<rpc>，且rpcContent不是<rpc/>，则在外面包装一层<rpc>
-        if (!rpcContent.startsWith("<rpc>") && !"<rpc/>".equals(rpcContent)) {
-            if (rpcContent.startsWith("<")) {
+        if (!rpcContent.startsWith(RPC_START_FLAG) && !RPC_NULL_TREE_FLAG.equals(rpcContent)) {
+            if (rpcContent.startsWith(XML_START_FLAG)) {
                 rpcContent = "<rpc>" + rpcContent + "</rpc>";
             } else {
                 rpcContent = "<rpc>" + "<" + rpcContent + "/>" + "</rpc>";

@@ -5,6 +5,10 @@ import lombok.Data;
 
 /**
  * 表示安全策略中直接引用ICMP协议。
+ *
+ * @author zifangsky
+ * @date 2021/2/8
+ * @since 1.0.0
  */
 @Data
 public class IcmpItem {

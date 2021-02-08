@@ -68,7 +68,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import net.juniper.netconf.core.exception.NetconfException;
 import org.xml.sax.SAXException;
 
-import net.juniper.netconf.core.XML;
 import net.juniper.netconf.core.Device;
 
 public class ShowInterfaces {

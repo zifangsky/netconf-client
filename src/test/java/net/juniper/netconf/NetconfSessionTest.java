@@ -2,9 +2,8 @@ package net.juniper.netconf;
 
 import com.jcraft.jsch.Channel;
 import lombok.extern.slf4j.Slf4j;
-import net.juniper.netconf.core.NetconfConstants;
-import net.juniper.netconf.core.exception.NetconfException;
 import net.juniper.netconf.core.NetconfSession;
+import net.juniper.netconf.core.exception.NetconfException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -19,11 +18,9 @@ import java.io.IOException;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.net.SocketTimeoutException;
-import java.nio.file.Files;
+import java.util.ArrayList;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.when;
 
 @Slf4j
@@ -67,26 +64,6 @@ public class NetconfSessionTest {
         when(mockChannel.getInputStream()).thenReturn(inPipe);
         when(mockChannel.getOutputStream()).thenReturn(out);
     }
-
-//    @Test
-//    public void GIVEN_getCandidateConfig_WHEN_syntaxError_THEN_throwNetconfException() throws Exception {
-//        when(mockNetconfSession.getCandidateConfig()).thenCallRealMethod();
-//        when(mockNetconfSession.getRpcReply(anyString())).thenReturn(NETCONF_SYNTAX_ERROR_MSG_FROM_DEVICE);
-//
-//        assertThatThrownBy(mockNetconfSession::getCandidateConfig)
-//                .isInstanceOf(NetconfException.class)
-//                .hasMessage("Netconf server detected an error: netconf error: syntax error");
-//    }
-
-//    @Test
-//    public void GIVEN_getRunningConfig_WHEN_syntaxError_THEN_throwNetconfException() throws Exception {
-//        when(mockNetconfSession.getRunningConfig()).thenCallRealMethod();
-//        when(mockNetconfSession.getRpcReply(anyString())).thenReturn(NETCONF_SYNTAX_ERROR_MSG_FROM_DEVICE);
-//
-//        assertThatThrownBy(mockNetconfSession::getRunningConfig)
-//                .isInstanceOf(NetconfException.class)
-//                .hasMessage("Netconf server detected an error: netconf error: syntax error");
-//    }
 
     @Test
     public void GIVEN_createSession_WHEN_timeoutExceeded_THEN_throwSocketTimeoutException() throws Exception {
@@ -153,46 +130,6 @@ public class NetconfSessionTest {
         createNetconfSession(COMMAND_TIMEOUT);
     }
 
-    @Test
-    public void GIVEN_executeRPC_WHEN_lldpRequest_THEN_correctResponse() throws Exception {
-        byte[] lldpResponse = Files.readAllBytes(TestHelper.getSampleFile("responses/lldpResponse.xml").toPath());
-
-        Thread thread = new Thread(() -> {
-            try {
-                outPipe.write(FAKE_RPC_REPLY.getBytes());
-                outPipe.write(DEVICE_PROMPT_BYTE);
-                outPipe.flush();
-                Thread.sleep(800);
-                outPipe.write(lldpResponse);
-                outPipe.flush();
-                Thread.sleep(700);
-                outPipe.write(DEVICE_PROMPT_BYTE);
-                outPipe.flush();
-                Thread.sleep(1900);
-                outPipe.close();
-            } catch (IOException | InterruptedException e) {
-                log.error("error =", e);
-            }
-        });
-        thread.start();
-
-        NetconfSession netconfSession = createNetconfSession(COMMAND_TIMEOUT);
-        Thread.sleep(200);
-        String deviceResponse = netconfSession.executeRpc(TestConstants.LLDP_REQUEST).toString();
-
-        assertEquals(new String(lldpResponse) + NetconfConstants.LF, deviceResponse);
-    }
-
-    @Test
-    public void GIVEN_executeRPC_WHEN_syntaxError_THEN_throwNetconfException() throws Exception {
-        when(mockNetconfSession.executeRpc(eq(TestConstants.LLDP_REQUEST))).thenCallRealMethod();
-//        when(mockNetconfSession.getRpcReply(anyString())).thenReturn(NETCONF_SYNTAX_ERROR_MSG_FROM_DEVICE);
-
-        assertThatThrownBy(() -> mockNetconfSession.executeRpc(TestConstants.LLDP_REQUEST).toString())
-                .isInstanceOf(NetconfException.class)
-                .hasMessage("Netconf server detected an error: netconf error: syntax error");
-    }
-
     private NetconfSession createNetconfSession(int commandTimeout) throws IOException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         try {
@@ -201,6 +138,6 @@ public class NetconfSessionTest {
             throw new NetconfException(String.format("Error creating XML Parser: %s", e.getMessage()));
         }
 
-        return new NetconfSession(mockChannel, CONNECTION_TIMEOUT, commandTimeout, null);
+        return new NetconfSession(mockChannel, CONNECTION_TIMEOUT, commandTimeout, new ArrayList<>());
     }
 }

@@ -23,95 +23,95 @@ public class DefaultRpcManager implements RpcManager {
     /**
      * 通过 NETCONF 执行命令
      */
-    public static String runCliCommandTemplate = "<command format=\"text\">" +
-                                                        "{0}" +
-                                                    "</command>";
+    public static final String RUN_CLI_COMMAND_TEMPLATE = "<command format=\"text\">" +
+                                                              "{0}" +
+                                                          "</command>";
     /**
      * &#60;get-config&#62;报文
      */
-    public static String getConfigTemplate = "<get-config>" +
-                                                    "<source>" +
-                                                        "<{0}/>" +
-                                                    "</source>" +
-                                                    "{1}" +
-                                                "</get-config>";
+    public static final String GET_CONFIG_TEMPLATE = "<get-config>" +
+                                                          "<source>" +
+                                                              "<{0}/>" +
+                                                          "</source>" +
+                                                          "{1}" +
+                                                      "</get-config>";
     /**
      * &#60;get-config&#62;过滤条件
      */
-    public static String getConfigFilter = "<filter type=\"subtree\">{0}</filter>";
+    public static final String GET_CONFIG_FILTER = "<filter type=\"subtree\">{0}</filter>";
 
     /**
      * &#60;edit-config&#62;报文（&#60;default-operation&#62;、&#60;test-option&#62;、&#60;error-option&#62;）
      */
-    public static String editConfigTemplate = "<edit-config>" +
-                                                    "<target>" +
-                                                        "<{0}/>" +
-                                                    "</target>" +
-                                                    "{1}" +
-                                                    "{2}" +
-                                                    "{3}" +
-                                                    "<config>" +
-                                                        "<{4}/>" +
-                                                    "</config>" +
-                                                "</edit-config>";
+    public static final String EDIT_CONFIG_TEMPLATE = "<edit-config>" +
+                                                            "<target>" +
+                                                                "<{0}/>" +
+                                                            "</target>" +
+                                                            "{1}" +
+                                                            "{2}" +
+                                                            "{3}" +
+                                                            "<config>" +
+                                                                "<{4}/>" +
+                                                            "</config>" +
+                                                        "</edit-config>";
     /**
      * &#60;edit-config&#62;的&#60;default-operation&#62;节点
      */
-    public static String editConfigDefaultOperation = "<default-operation>{0}</default-operation>";
+    public static final String EDIT_CONFIG_DEFAULT_OPERATION = "<default-operation>{0}</default-operation>";
     /**
      * &#60;edit-config&#62;的&#60;test-option&#62;节点
      */
-    public static String editConfigTestOption = "<test-option>{0}</test-option>";
+    public static final String EDIT_CONFIG_TEST_OPTION = "<test-option>{0}</test-option>";
     /**
      * &#60;edit-config&#62;的&#60;error-option&#62;节点
      */
-    public static String editConfigErrorOption = "<error-option>{0}</error-option>";
+    public static final String EDIT_CONFIG_ERROR_OPTION = "<error-option>{0}</error-option>";
 
     /**
      * &#60;lock&#62;报文
      */
-    public static String lockTemplate = "<lock>" +
-                                            "<target>" +
-                                                "<{0}/>" +
-                                            "</target>" +
-                                        "</lock>";
+    public static final String LOCK_TEMPLATE = "<lock>" +
+                                                    "<target>" +
+                                                        "<{0}/>" +
+                                                    "</target>" +
+                                                "</lock>";
     /**
      * &#60;unlock&#62;报文
      */
-    public static String unlockTemplate = "<unlock>" +
-                                                "<target>" +
-                                                    "<{0}/>" +
-                                                "</target>" +
-                                            "</unlock>";
+    public static final String UNLOCK_TEMPLATE = "<unlock>" +
+                                                      "<target>" +
+                                                          "<{0}/>" +
+                                                      "</target>" +
+                                                  "</unlock>";
     /**
      * &#60;commit&#62;报文
      */
-    public static String commitTemplate = "<commit/>";
+    public static final String COMMIT_TEMPLATE = "<commit/>";
     /**
      * &#60;commit&#62;报文（&#60;confirmed&#62;）
      */
-    public static String commitConfirmTemplate = "<commit>" +
-                                                    "<confirmed/>" +
-                                                    "<confirm-timeout>{0}</confirm-timeout>" +
-                                                "</commit>";
+    public static final String COMMIT_CONFIRM_TEMPLATE = "<commit>" +
+                                                              "<confirmed/>" +
+                                                              "<confirm-timeout>{0}</confirm-timeout>" +
+                                                          "</commit>";
     /**
      * &#60;validate&#62;报文（&#60;confirmed&#62;）
      */
-    public static String validateTemplate = "<validate>" +
-                                                "<source>" +
-                                                    "<{0}/>" +
-                                                "</source>" +
-                                            "</validate>";
+    public static final String VALIDATE_TEMPLATE = "<validate>" +
+                                                        "<source>" +
+                                                            "<{0}/>" +
+                                                        "</source>" +
+                                                    "</validate>";
     /**
      * &#60;close-session&#62;报文
      */
-    public static String closeSessionTemplate = "<close-session/>";
+    public static final String CLOSE_SESSION_TEMPLATE = "<close-session/>";
     /**
      * &#60;kill-session&#62;报文
      */
-    public static String killSessionTemplate = "<kill-session>" +
-                                                    "<session-id>{0}</session-id>" +
-                                                "</kill-session>";
+    public static final String KILL_SESSION_TEMPLATE = "<kill-session>" +
+                                                            "<session-id>{0}</session-id>" +
+                                                        "</kill-session>";
 
     /*  params  */
     /**
@@ -153,13 +153,13 @@ public class DefaultRpcManager implements RpcManager {
 
     @Override
     public String runCliCommand(String command) throws IOException {
-        String rpcContent = MessageFormat.format(runCliCommandTemplate, command);
+        String rpcContent = MessageFormat.format(RUN_CLI_COMMAND_TEMPLATE, command);
         return this.executeRpc(rpcContent);
     }
 
     @Override
     public BufferedReader runCliCommandRunning(String command) throws IOException {
-        String rpcContent = MessageFormat.format(runCliCommandTemplate, command);
+        String rpcContent = MessageFormat.format(RUN_CLI_COMMAND_TEMPLATE, command);
         return this.executeRpcRunning(rpcContent);
     }
 
@@ -171,10 +171,10 @@ public class DefaultRpcManager implements RpcManager {
 
         String filter = "";
         if(StringUtils.isNoneBlank(filterTree)){
-            filter = MessageFormat.format(getConfigFilter, filterTree);
+            filter = MessageFormat.format(GET_CONFIG_FILTER, filterTree);
         }
 
-        String rpcContent = MessageFormat.format(getConfigTemplate, source.getCode(), filter);
+        String rpcContent = MessageFormat.format(GET_CONFIG_TEMPLATE, source.getCode(), filter);
         return this.executeRpc(rpcContent);
     }
 
@@ -209,18 +209,18 @@ public class DefaultRpcManager implements RpcManager {
         }
         String defaultOperationStr = "";
         if(defaultOperation != null){
-            defaultOperationStr = MessageFormat.format(editConfigDefaultOperation, defaultOperation.getCode());
+            defaultOperationStr = MessageFormat.format(EDIT_CONFIG_DEFAULT_OPERATION, defaultOperation.getCode());
         }
         String testOptionStr = "";
         if(testOption != null){
-            testOptionStr = MessageFormat.format(editConfigTestOption, testOption.getCode());
+            testOptionStr = MessageFormat.format(EDIT_CONFIG_TEST_OPTION, testOption.getCode());
         }
         String errorOptionStr = "";
         if(errorOption != null){
-            testOptionStr = MessageFormat.format(editConfigErrorOption, errorOption.getCode());
+            testOptionStr = MessageFormat.format(EDIT_CONFIG_ERROR_OPTION, errorOption.getCode());
         }
 
-        String rpcContent = MessageFormat.format(editConfigTemplate, source.getCode(), defaultOperationStr, testOptionStr, errorOptionStr, configTree);
+        String rpcContent = MessageFormat.format(EDIT_CONFIG_TEMPLATE, source.getCode(), defaultOperationStr, testOptionStr, errorOptionStr, configTree);
         return this.executeRpc(rpcContent);
     }
 
@@ -234,7 +234,7 @@ public class DefaultRpcManager implements RpcManager {
         if(source == null){
             source = TargetEnums.RUNNING;
         }
-        String rpcContent = MessageFormat.format(lockTemplate, source.getCode());
+        String rpcContent = MessageFormat.format(LOCK_TEMPLATE, source.getCode());
         this.executeRpc(rpcContent);
         //返回执行结果
         return this.device.lastReplyIsSuccess();
@@ -250,7 +250,7 @@ public class DefaultRpcManager implements RpcManager {
         if(source == null){
             source = TargetEnums.RUNNING;
         }
-        String rpcContent = MessageFormat.format(unlockTemplate, source.getCode());
+        String rpcContent = MessageFormat.format(UNLOCK_TEMPLATE, source.getCode());
         this.executeRpc(rpcContent);
         //返回执行结果
         return this.device.lastReplyIsSuccess();
@@ -258,14 +258,14 @@ public class DefaultRpcManager implements RpcManager {
 
     @Override
     public boolean commit() throws IOException {
-        this.executeRpc(commitTemplate);
+        this.executeRpc(COMMIT_TEMPLATE);
         //返回执行结果
         return this.device.lastReplyIsSuccess();
     }
 
     @Override
     public boolean commitConfirm(int confirmTimeout) throws IOException {
-        String rpcContent = MessageFormat.format(commitConfirmTemplate, confirmTimeout);
+        String rpcContent = MessageFormat.format(COMMIT_CONFIRM_TEMPLATE, confirmTimeout);
         this.executeRpc(rpcContent);
         //返回执行结果
         return this.device.lastReplyIsSuccess();
@@ -273,21 +273,21 @@ public class DefaultRpcManager implements RpcManager {
 
     @Override
     public boolean validate() throws IOException {
-        this.executeRpc(validateTemplate);
+        this.executeRpc(VALIDATE_TEMPLATE);
         //返回执行结果
         return this.device.lastReplyIsSuccess();
     }
 
     @Override
     public boolean closeSession() throws IOException {
-        this.executeRpc(closeSessionTemplate);
+        this.executeRpc(CLOSE_SESSION_TEMPLATE);
         //返回执行结果
         return this.device.lastReplyIsSuccess();
     }
 
     @Override
     public boolean killSession(int sessionId) throws IOException {
-        String rpcContent = MessageFormat.format(killSessionTemplate, sessionId);
+        String rpcContent = MessageFormat.format(KILL_SESSION_TEMPLATE, sessionId);
         this.executeRpc(rpcContent);
         //返回执行结果
         return this.device.lastReplyIsSuccess();

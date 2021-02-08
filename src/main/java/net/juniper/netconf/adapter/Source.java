@@ -5,6 +5,10 @@ import lombok.Data;
 
 /**
  * 用于指定不同的配置库
+ *
+ * @author zifangsky
+ * @date 2021/2/8
+ * @since 1.0.0
  */
 @Data
 public class Source {
