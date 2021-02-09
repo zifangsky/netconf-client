@@ -1,8 +1,5 @@
 package net.juniper.netconf;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import net.juniper.netconf.adapter.huawei.HuaWeiConstants;
 import net.juniper.netconf.adapter.huawei.secPolicy.SecPolicy;
 import net.juniper.netconf.adapter.huawei.secPolicy.StaticPolicyGroup;
@@ -46,6 +43,7 @@ public class DeviceTest {
      * 测试连接情况
      */
     @Test
+    @DisplayName("测试连接情况")
     public void GIVEN_requiredParameters_THEN_createDevice() throws NetconfException {
         System.out.println(rpcManager.getSessionId() + ": " + rpcManager.isConnected());
     }
@@ -54,6 +52,7 @@ public class DeviceTest {
      * 查看安全策略配置
      */
     @Test
+    @DisplayName("查看安全策略配置")
     public void getConfigSecPolicy() throws Exception {
         String xml = rpcManager.executeRpc("<get-config><source><running/></source><filter type=\"subtree\"><sec-policy xmlns=\"urn:huawei:params:xml:ns:yang:huawei-security-policy\"></sec-policy></filter></get-config>");
         System.out.println(xml);
@@ -63,6 +62,7 @@ public class DeviceTest {
      * 创建安全策略配置
      */
     @Test
+    @DisplayName("创建安全策略配置")
     public void editConfigCreateSecPolicy() throws Exception {
         String xml = rpcManager.executeRpc("<edit-config><target><running/></target><error-option>rollback-on-error</error-option><config><sec-policy xmlns=\"urn:huawei:params:xml:ns:yang:huawei-security-policy\" xmlns:nc=\"urn:ietf:params:xml:ns:netconf:base:1.0\" xmlns:yang=\"urn:ietf:params:xml:ns:yang:1\"><vsys><name>public</name><static-policy><rule nc:operation='create'><name>test</name><desc>just for test</desc><source-zone>trust</source-zone><destination-zone>untrust</destination-zone><source-ip><address-ipv4>1.1.1.1/32</address-ipv4></source-ip><destination-ip><address-ipv4>2.2.2.2/32</address-ipv4></destination-ip><service><service-items><tcp><source-port>100 200 to 300 600</source-port><dest-port>700 888 to 999 1023</dest-port></tcp></service-items></service><action>true</action></rule></static-policy></vsys></sec-policy></config></edit-config>");
 //        String xml = device.executeRPC("<edit-config><target><running/></target><error-option>rollback-on-error</error-option><config><sec-policy xmlns=\"urn:huawei:params:xml:ns:yang:huawei-security-policy\"><vsys><name>public</name><static-policy><rule nc:operation='create'><name>test2</name><desc>just for test2</desc><source-zone>trust</source-zone><destination-zone>untrust</destination-zone><source-ip><address-ipv4>1.1.1.1/32</address-ipv4></source-ip><destination-ip><address-ipv4>2.2.2.2/32</address-ipv4></destination-ip><service><service-items><tcp><source-port>100 200 to 300 600</source-port><dest-port>700 888 to 999 1023</dest-port></tcp></service-items></service><action>true</action></rule></static-policy></vsys></sec-policy></config></edit-config>");
@@ -76,6 +76,7 @@ public class DeviceTest {
      * 查询安全策略组
      */
     @Test
+    @DisplayName("查询安全策略组")
     public void getConfigSecPolicyGroup() throws Exception {
         SecPolicy secPolicy = new SecPolicy();
         List<VirtualSystem> vsys = new ArrayList<>();
@@ -86,13 +87,12 @@ public class DeviceTest {
         vsys.add(vsy);
         secPolicy.setVsys(vsys);
 
-        XmlMapper xmlMapper = new XmlMapper();
-        xmlMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+//        XmlMapper xmlMapper = new XmlMapper();
+//        xmlMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
 //        xmlMapper.enable(SerializationFeature.INDENT_OUTPUT);
-        xmlMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+//        xmlMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
-        String xmlStr = xmlMapper.writeValueAsString(secPolicy)
-                .replaceAll(":?wstxns1:?", "")
+        String xmlStr = DefaultRpcManager.XMLMAPPER_RESOURCES.get().writeValueAsString(secPolicy)
                 .replace("<sec-policy>", "<sec-policy xmlns=\"" + HuaWeiConstants.NAMESPACE_HUAWEI + "\">");
 //        System.out.println(xmlStr);
 

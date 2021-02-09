@@ -28,6 +28,8 @@ import static net.juniper.netconf.core.NetconfSession.HELLO_RPC_REPLY_FLAG;
  * @since 1.0.0
  */
 public class DefaultRpcManager implements RpcManager {
+    public static ThreadLocal<XmlMapper> XMLMAPPER_RESOURCES = ThreadLocal.withInitial(XmlMapper::new);
+
     /**
      * 通过 NETCONF 执行命令
      */
@@ -420,8 +422,7 @@ public class DefaultRpcManager implements RpcManager {
      * 检查普通rpc报文的返回
      */
     private boolean checkCommonRpcReply(String xml) throws JsonProcessingException {
-        XmlMapper xmlMapper = new XmlMapper();
-        RpcReply<Void> rpcReply = xmlMapper.readValue(xml, new TypeReference<RpcReply<Void>>() {});
+        RpcReply<Void> rpcReply = XMLMAPPER_RESOURCES.get().readValue(xml, new TypeReference<RpcReply<Void>>() {});
         if(rpcReply == null){
             return false;
         }
@@ -439,8 +440,7 @@ public class DefaultRpcManager implements RpcManager {
      * 检查 hello 报文的返回
      */
     private boolean checkHelloRpcReply(String xml) throws JsonProcessingException {
-        XmlMapper xmlMapper = new XmlMapper();
-        HelloRpc rpcReply = xmlMapper.readValue(xml, HelloRpc.class);
+        HelloRpc rpcReply = XMLMAPPER_RESOURCES.get().readValue(xml, HelloRpc.class);
         if(rpcReply == null){
             return false;
         }

@@ -49,6 +49,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 @Slf4j
 public class NetconfSession {
+    private static ThreadLocal<XmlMapper> XMLMAPPER_RESOURCES = ThreadLocal.withInitial(XmlMapper::new);
+
     /**
      * hello返回报文的标识
      */
@@ -382,8 +384,7 @@ public class NetconfSession {
      * 处理 hello 报文的返回
      */
     private void handleHelloRpcReply(String xml) throws JsonProcessingException {
-        XmlMapper xmlMapper = new XmlMapper();
-        HelloRpc rpcReply = xmlMapper.readValue(xml, HelloRpc.class);
+        HelloRpc rpcReply = XMLMAPPER_RESOURCES.get().readValue(xml, HelloRpc.class);
         if(rpcReply == null){
             return;
         }
@@ -402,8 +403,7 @@ public class NetconfSession {
      * 处理普通rpc报文的返回
      */
     private void handleCommonRpcReply(String xml) throws JsonProcessingException {
-        XmlMapper xmlMapper = new XmlMapper();
-        RpcReply<Void> rpcReply = xmlMapper.readValue(xml, new TypeReference<RpcReply<Void>>() {});
+        RpcReply<Void> rpcReply = XMLMAPPER_RESOURCES.get().readValue(xml, new TypeReference<RpcReply<Void>>() {});
         if(rpcReply == null){
             return;
         }
