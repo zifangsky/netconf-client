@@ -3,12 +3,13 @@ package net.juniper.netconf.core;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import net.juniper.netconf.adapter.RpcReply;
+import net.juniper.netconf.core.model.RpcReply;
 import net.juniper.netconf.core.enums.DefaultOperationEnums;
 import net.juniper.netconf.core.enums.ErrorOptionEnums;
 import net.juniper.netconf.core.enums.TargetEnums;
 import net.juniper.netconf.core.enums.TestOptionEnums;
 import net.juniper.netconf.core.exception.NetconfException;
+import net.juniper.netconf.core.model.HelloRpc;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.BufferedReader;

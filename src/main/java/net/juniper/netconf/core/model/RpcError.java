@@ -1,4 +1,4 @@
-package net.juniper.netconf.adapter;
+package net.juniper.netconf.core.model;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import lombok.Data;

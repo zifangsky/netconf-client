@@ -16,8 +16,9 @@ import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.JSchException;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import net.juniper.netconf.adapter.RpcReply;
+import net.juniper.netconf.core.model.RpcReply;
 import net.juniper.netconf.core.exception.NetconfException;
+import net.juniper.netconf.core.model.HelloRpc;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
