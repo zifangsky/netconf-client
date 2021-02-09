@@ -1,5 +1,9 @@
 package net.juniper.netconf.core;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import net.juniper.netconf.adapter.RpcReply;
 import net.juniper.netconf.core.enums.DefaultOperationEnums;
 import net.juniper.netconf.core.enums.ErrorOptionEnums;
 import net.juniper.netconf.core.enums.TargetEnums;
@@ -10,6 +14,9 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.text.MessageFormat;
+
+import static net.juniper.netconf.core.NetconfSession.COMMON_RPC_REPLY_FLAG;
+import static net.juniper.netconf.core.NetconfSession.HELLO_RPC_REPLY_FLAG;
 
 /**
  * NETCONF相关的基本RPC操作
@@ -26,6 +33,14 @@ public class DefaultRpcManager implements RpcManager {
     public static final String RUN_CLI_COMMAND_TEMPLATE = "<command format=\"text\">" +
                                                               "{0}" +
                                                           "</command>";
+    /**
+     * &#60;get&#62;报文
+     */
+    public static final String GET_TEMPLATE =   "<get>" +
+                                                    "<filter type=\"subtree\">" +
+                                                        "{0}" +
+                                                    "</filter>" +
+                                                "</get>";
     /**
      * &#60;get-config&#62;报文
      */
@@ -66,6 +81,36 @@ public class DefaultRpcManager implements RpcManager {
      * &#60;edit-config&#62;的&#60;error-option&#62;节点
      */
     public static final String EDIT_CONFIG_ERROR_OPTION = "<error-option>{0}</error-option>";
+    /**
+     * &#60;copy-config&#62;报文
+     */
+    public static final String COPY_CONFIG_TEMPLATE = "<copy-config>" +
+                                                            "<target>" +
+                                                                "<{0}/>" +
+                                                            "</target>" +
+                                                            "<source>" +
+                                                                "<{1}/>" +
+                                                            "</source>" +
+                                                        "</copy-config>";
+    /**
+     * &#60;copy-config&#62;报文
+     */
+    public static final String COPY_CONFIG_BY_URL_TEMPLATE = "<copy-config>" +
+                                                                  "<target>" +
+                                                                      "<{0}/>" +
+                                                                  "</target>" +
+                                                                  "<source>" +
+                                                                      "<url>{1}</url>" +
+                                                                  "</source>" +
+                                                              "</copy-config>";
+    /**
+     * &#60;delete-config&#62;报文
+     */
+    public static final String DELETE_CONFIG_TEMPLATE = "<delete-config>" +
+                                                            "<target>" +
+                                                                "<{0}/>" +
+                                                            "</target>" +
+                                                        "</delete-config>";
 
     /**
      * &#60;lock&#62;报文
@@ -121,7 +166,7 @@ public class DefaultRpcManager implements RpcManager {
 
     public DefaultRpcManager(Device device) throws NetconfException {
         if(device == null){
-            throw new IllegalArgumentException("Parameter cannot be empty.");
+            throw new IllegalArgumentException("Parameter 'device' cannot be empty.");
         }
 
         if(!device.isConnected()){
@@ -164,6 +209,16 @@ public class DefaultRpcManager implements RpcManager {
     }
 
     @Override
+    public String get(String filterTree) throws IOException {
+        if(StringUtils.isBlank(filterTree)){
+            throw new IllegalArgumentException("Parameter 'filterTree' cannot be empty.");
+        }
+
+        String rpcContent = MessageFormat.format(GET_TEMPLATE, filterTree);
+        return this.executeRpc(rpcContent);
+    }
+
+    @Override
     public String getConfig(TargetEnums source, String filterTree) throws IOException {
         if(source == null){
             source = TargetEnums.RUNNING;
@@ -201,7 +256,7 @@ public class DefaultRpcManager implements RpcManager {
     @Override
     public String editConfig(TargetEnums source, DefaultOperationEnums defaultOperation, TestOptionEnums testOption, ErrorOptionEnums errorOption, String configTree) throws IOException {
         if(StringUtils.isBlank(configTree)){
-            throw new IllegalArgumentException("Parameter cannot be empty.");
+            throw new IllegalArgumentException("Parameter 'configTree' cannot be empty.");
         }
 
         if(source == null){
@@ -225,6 +280,51 @@ public class DefaultRpcManager implements RpcManager {
     }
 
     @Override
+    public boolean copyConfig(TargetEnums target, TargetEnums source) throws IOException {
+        if(target == null){
+            target = TargetEnums.RUNNING;
+        }
+        if(source == null){
+            throw new IllegalArgumentException("Parameter 'source' cannot be empty.");
+        }
+
+        String rpcContent = MessageFormat.format(COPY_CONFIG_TEMPLATE, target.getCode(), source.getCode());
+        String rpcReply = this.executeRpc(rpcContent);
+
+        //返回执行结果
+        return this.checkIsSuccess(rpcReply);
+    }
+
+    @Override
+    public boolean copyConfig(TargetEnums target, String sourceUrl) throws IOException {
+        if(target == null){
+            target = TargetEnums.RUNNING;
+        }
+        if(StringUtils.isBlank(sourceUrl)){
+            throw new IllegalArgumentException("Parameter 'sourceUrl' cannot be empty.");
+        }
+
+        String rpcContent = MessageFormat.format(COPY_CONFIG_BY_URL_TEMPLATE, target.getCode(), sourceUrl);
+        String rpcReply = this.executeRpc(rpcContent);
+
+        //返回执行结果
+        return this.checkIsSuccess(rpcReply);
+    }
+
+    @Override
+    public boolean deleteConfig(TargetEnums target) throws IOException {
+        if(target == null){
+            throw new IllegalArgumentException("Parameter 'target' cannot be empty.");
+        }
+
+        String rpcContent = MessageFormat.format(DELETE_CONFIG_TEMPLATE, target.getCode());
+        String rpcReply = this.executeRpc(rpcContent);
+
+        //返回执行结果
+        return this.checkIsSuccess(rpcReply);
+    }
+
+    @Override
     public boolean lock() throws IOException {
         return this.lock(TargetEnums.RUNNING);
     }
@@ -235,9 +335,9 @@ public class DefaultRpcManager implements RpcManager {
             source = TargetEnums.RUNNING;
         }
         String rpcContent = MessageFormat.format(LOCK_TEMPLATE, source.getCode());
-        this.executeRpc(rpcContent);
+        String rpcReply = this.executeRpc(rpcContent);
         //返回执行结果
-        return this.device.lastReplyIsSuccess();
+        return this.checkIsSuccess(rpcReply);
     }
 
     @Override
@@ -251,46 +351,99 @@ public class DefaultRpcManager implements RpcManager {
             source = TargetEnums.RUNNING;
         }
         String rpcContent = MessageFormat.format(UNLOCK_TEMPLATE, source.getCode());
-        this.executeRpc(rpcContent);
+        String rpcReply = this.executeRpc(rpcContent);
         //返回执行结果
-        return this.device.lastReplyIsSuccess();
+        return this.checkIsSuccess(rpcReply);
     }
 
     @Override
     public boolean commit() throws IOException {
-        this.executeRpc(COMMIT_TEMPLATE);
+        String rpcReply = this.executeRpc(COMMIT_TEMPLATE);
+
         //返回执行结果
-        return this.device.lastReplyIsSuccess();
+        return this.checkIsSuccess(rpcReply);
     }
 
     @Override
     public boolean commitConfirm(int confirmTimeout) throws IOException {
         String rpcContent = MessageFormat.format(COMMIT_CONFIRM_TEMPLATE, confirmTimeout);
-        this.executeRpc(rpcContent);
+        String rpcReply = this.executeRpc(rpcContent);
+
         //返回执行结果
-        return this.device.lastReplyIsSuccess();
+        return this.checkIsSuccess(rpcReply);
     }
 
     @Override
-    public boolean validate() throws IOException {
-        this.executeRpc(VALIDATE_TEMPLATE);
+    public boolean validate(TargetEnums source) throws IOException {
+        String rpcContent = MessageFormat.format(VALIDATE_TEMPLATE, source.getCode());
+        String rpcReply = this.executeRpc(rpcContent);
+
         //返回执行结果
-        return this.device.lastReplyIsSuccess();
+        return this.checkIsSuccess(rpcReply);
     }
 
     @Override
     public boolean closeSession() throws IOException {
-        this.executeRpc(CLOSE_SESSION_TEMPLATE);
+        String rpcReply = this.executeRpc(CLOSE_SESSION_TEMPLATE);
+
         //返回执行结果
-        return this.device.lastReplyIsSuccess();
+        return this.checkIsSuccess(rpcReply);
     }
 
     @Override
     public boolean killSession(int sessionId) throws IOException {
         String rpcContent = MessageFormat.format(KILL_SESSION_TEMPLATE, sessionId);
-        this.executeRpc(rpcContent);
+        String rpcReply = this.executeRpc(rpcContent);
+
         //返回执行结果
-        return this.device.lastReplyIsSuccess();
+        return this.checkIsSuccess(rpcReply);
     }
 
+    @Override
+    public boolean checkIsSuccess(String rpcReply) throws IOException {
+        if(StringUtils.isBlank(rpcReply)){
+            return false;
+        }
+
+        if(rpcReply.contains(COMMON_RPC_REPLY_FLAG)){
+            return this.checkCommonRpcReply(rpcReply);
+        }
+        else if(rpcReply.contains(HELLO_RPC_REPLY_FLAG)){
+            return this.checkHelloRpcReply(rpcReply);
+        }
+
+        return false;
+    }
+
+    /**
+     * 检查普通rpc报文的返回
+     */
+    private boolean checkCommonRpcReply(String xml) throws JsonProcessingException {
+        XmlMapper xmlMapper = new XmlMapper();
+        RpcReply<Void> rpcReply = xmlMapper.readValue(xml, new TypeReference<RpcReply<Void>>() {});
+        if(rpcReply == null){
+            return false;
+        }
+
+        //执行成功标识
+        boolean ok = (rpcReply.getOk() != null);
+        //标识错误的严重级别
+        String errorSeverity = (rpcReply.getError() == null ? null : rpcReply.getError().getErrorSeverity());
+
+        //返回执行成功标识，或者没有返回错误信息
+        return (ok || (errorSeverity == null));
+    }
+
+    /**
+     * 检查 hello 报文的返回
+     */
+    private boolean checkHelloRpcReply(String xml) throws JsonProcessingException {
+        XmlMapper xmlMapper = new XmlMapper();
+        HelloRpc rpcReply = xmlMapper.readValue(xml, HelloRpc.class);
+        if(rpcReply == null){
+            return false;
+        }
+
+        return rpcReply.getSessionId() != null;
+    }
 }

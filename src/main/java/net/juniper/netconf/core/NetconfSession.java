@@ -104,7 +104,7 @@ public class NetconfSession {
      */
     private final Map<String, String> rpcAttrMap = new ConcurrentHashMap<>();
     /**
-     * 缓存<rpc>层级的属性
+     * 缓存<rpc>层级的属性（一旦缓存成功就不再更改）
      */
     private String rpcAttributes;
     /**
@@ -121,8 +121,8 @@ public class NetconfSession {
     }
 
     public NetconfSession(Channel netConfChannel, int connectionTimeout, int commandTimeout, List<String> netconfCapabilities) throws IOException {
-        stdInStreamFromDevice = netConfChannel.getInputStream();
-        stdOutStreamToDevice = netConfChannel.getOutputStream();
+        this.stdInStreamFromDevice = netConfChannel.getInputStream();
+        this.stdOutStreamToDevice = netConfChannel.getOutputStream();
         try {
             netConfChannel.connect(connectionTimeout);
         } catch (JSchException e) {
@@ -237,8 +237,8 @@ public class NetconfSession {
      * 执行一个rpc请求报文，返回{@link BufferedReader}
      */
     private BufferedReader getRpcReplyRunning(String rpc) throws IOException {
-        sendRpcRequest(rpc);
-        return new BufferedReader(new InputStreamReader(stdInStreamFromDevice, Charsets.UTF_8));
+        this.sendRpcRequest(rpc);
+        return new BufferedReader(new InputStreamReader(this.stdInStreamFromDevice, Charsets.UTF_8));
     }
 
     /**
@@ -246,17 +246,19 @@ public class NetconfSession {
      */
     private String getRpcReply(String rpc) throws IOException {
         // write the rpc to the device
-        sendRpcRequest(rpc);
+        this.sendRpcRequest(rpc);
 
         final char[] buffer = new char[BUFFER_SIZE];
         final StringBuilder rpcReply = new StringBuilder();
         final long startTime = System.nanoTime();
-        final Reader in = new InputStreamReader(stdInStreamFromDevice, Charsets.UTF_8);
+        final Reader in = new InputStreamReader(this.stdInStreamFromDevice, Charsets.UTF_8);
+
         boolean timeoutNotExceeded = true;
         int promptPosition = -1;
         while ((promptPosition = rpcReply.indexOf(NetconfConstants.DEVICE_PROMPT)) < 0 &&
                 (timeoutNotExceeded = (TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime) < commandTimeout))) {
             int charsRead = in.read(buffer, 0, buffer.length);
+
             if (charsRead < 0) {
                 throw new NetconfException("Input Stream has been closed during reading.");
             }
@@ -266,6 +268,7 @@ public class NetconfSession {
         if (!timeoutNotExceeded) {
             throw new SocketTimeoutException("Command timeout limit was exceeded: " + commandTimeout);
         }
+
         // fixing the rpc reply by removing device prompt
         log.debug("Received Netconf RPC-Reply\n{}", rpcReply);
         rpcReply.setLength(promptPosition);
@@ -279,35 +282,40 @@ public class NetconfSession {
     private void sendRpcRequest(String rpc) throws IOException {
         // RFC conformance for XML type, namespaces and message ids for RPCs
         int newMessageId = messageId.incrementAndGet();
+
         rpc = rpc.replace("<rpc>", "<rpc" + this.getRpcAttributes() + " message-id=\"" + newMessageId + "\">").trim();
         if (!rpc.contains(NetconfConstants.XML_VERSION)) {
             rpc = NetconfConstants.XML_VERSION + rpc;
         }
+
         // writing the rpc to the device
         log.debug("Sending Netconf RPC\n{}", rpc);
-        stdOutStreamToDevice.write(rpc.getBytes(Charsets.UTF_8));
-        stdOutStreamToDevice.flush();
+        this.stdOutStreamToDevice.write(rpc.getBytes(Charsets.UTF_8));
+        this.stdOutStreamToDevice.flush();
     }
 
     /**
      * 获取rpc层级的属性，如果没有手动指定，则设置一个默认的xmlns
      */
     private synchronized String getRpcAttributes() {
-        if(rpcAttributes == null) {
-            StringBuilder attributes = new StringBuilder();
+        if(this.rpcAttributes == null) {
             boolean useDefaultNamespace = true;
+            StringBuilder attributes = new StringBuilder();
+
             for (Map.Entry<String, String> attribute : this.rpcAttrMap.entrySet()) {
                 attributes.append(String.format(" %1s=\"%2s\"", attribute.getKey(), attribute.getValue()));
+
                 if ("xmlns".equals(attribute.getKey())) {
                     useDefaultNamespace = false;
                 }
             }
+
             if (useDefaultNamespace) {
                 attributes.append(" xmlns=\"" + NetconfConstants.URN_XML_NS_NETCONF_BASE_1_0 + "\"");
             }
-            rpcAttributes = attributes.toString();
+            this.rpcAttributes = attributes.toString();
         }
-        return rpcAttributes;
+        return this.rpcAttributes;
     }
 
     /**
@@ -376,6 +384,9 @@ public class NetconfSession {
         XmlMapper xmlMapper = new XmlMapper();
         HelloRpc rpcReply = xmlMapper.readValue(xml, HelloRpc.class);
         if(rpcReply == null){
+            return;
+        }
+        if(rpcReply.getSessionId() == null){
             return;
         }
 

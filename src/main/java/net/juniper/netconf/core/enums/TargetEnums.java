@@ -12,6 +12,10 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 public enum TargetEnums {
     /**
+     * startup
+     */
+    STARTUP("startup"),
+    /**
      * candidate
      */
     CANDIDATE("candidate"),
