@@ -2,7 +2,7 @@ package net.juniper.netconf;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import net.juniper.netconf.adapter.huawei.secPolicy.SecPolicyData;
+import net.juniper.netconf.adapter.huawei.secPolicy.model.SecPolicyData;
 import net.juniper.netconf.core.model.RpcReply;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

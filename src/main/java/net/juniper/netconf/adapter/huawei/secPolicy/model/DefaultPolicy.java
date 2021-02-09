@@ -1,4 +1,4 @@
-package net.juniper.netconf.adapter.huawei.secPolicy;
+package net.juniper.netconf.adapter.huawei.secPolicy.model;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import lombok.Data;
@@ -22,13 +22,13 @@ public class DefaultPolicy {
      * 表示默认安全策略的策略命中日志开关，取值"true"表示记录，取值"false"表示不记录。默认值是不记录。
      */
     @JacksonXmlProperty(localName = "policylog")
-    private boolean policyLog;
+    private Boolean policyLog;
 
     /**
      * 表示默认安全策略的会话日志开关，取值"true"表示记录，取值"false"表示不记录。默认值是不记录。
      */
     @JacksonXmlProperty(localName = "sessionlog")
-    private boolean sessionLog;
+    private Boolean sessionLog;
 
     /**
      * TODO：接口文档没有该字段含义
@@ -42,6 +42,6 @@ public class DefaultPolicy {
     @Data
     public static class GlobalIp {
         @JacksonXmlProperty(localName = "destination")
-        private boolean destination;
+        private Boolean destination;
     }
 }

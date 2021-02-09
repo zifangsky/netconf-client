@@ -1,4 +1,4 @@
-package net.juniper.netconf.adapter.huawei.secPolicy.rule;
+package net.juniper.netconf.adapter.huawei.secPolicy.model.rules;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import lombok.Data;
@@ -23,4 +23,12 @@ public class Icmp6Item {
      */
     @JacksonXmlProperty(localName = "icmp6-type-code")
     private IcmpTypeCode icmp6TypeCode;
+
+    public Icmp6Item() {
+    }
+
+    public Icmp6Item(String icmp6Name, IcmpTypeCode icmp6TypeCode) {
+        this.icmp6Name = icmp6Name;
+        this.icmp6TypeCode = icmp6TypeCode;
+    }
 }

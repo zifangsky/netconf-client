@@ -8,6 +8,8 @@ package net.juniper.netconf.adapter.huawei;
  * @since 1.0.0
  */
 public class HuaWeiConstants {
-    public static final String NAMESPACE_HUAWEI = "urn:huawei:params:xml:ns:yang:huawei-security-policy";
-
+    /**
+     * 安全策略
+     */
+    public static final String URN_HUAWEI_SECURITY_POLICY = "urn:huawei:params:xml:ns:yang:huawei-security-policy";
 }

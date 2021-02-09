@@ -1,4 +1,4 @@
-package net.juniper.netconf.adapter.huawei.secPolicy.rule;
+package net.juniper.netconf.adapter.huawei.secPolicy.model.rules;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import lombok.Data;
@@ -83,6 +83,25 @@ public class Address {
      */
     @JacksonXmlProperty(localName = "domain-set")
     private String domainSet;
+
+    public Address() {
+    }
+
+    public Address(String addressIp, boolean ipv4) {
+        if(ipv4){
+            this.addressIpv4 = addressIp;
+        }else{
+            this.addressIpv6 = addressIp;
+        }
+    }
+
+    public Address(AddressIpv4Range addressIpv4Range) {
+        this.addressIpv4Range = addressIpv4Range;
+    }
+
+    public Address(AddressIpv6Range addressIpv6Range) {
+        this.addressIpv6Range = addressIpv6Range;
+    }
 
     /* 其他内部属性 */
     /**

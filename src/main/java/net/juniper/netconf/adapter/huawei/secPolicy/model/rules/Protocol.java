@@ -1,4 +1,4 @@
-package net.juniper.netconf.adapter.huawei.secPolicy.rule;
+package net.juniper.netconf.adapter.huawei.secPolicy.model.rules;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import lombok.Data;
@@ -17,4 +17,11 @@ public class Protocol {
      */
     @JacksonXmlProperty(localName = "protocol-id")
     private Integer protocolId;
+
+    public Protocol() {
+    }
+
+    public Protocol(Integer protocolId) {
+        this.protocolId = protocolId;
+    }
 }

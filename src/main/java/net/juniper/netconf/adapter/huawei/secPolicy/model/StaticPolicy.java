@@ -1,9 +1,9 @@
-package net.juniper.netconf.adapter.huawei.secPolicy;
+package net.juniper.netconf.adapter.huawei.secPolicy.model;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import lombok.Data;
-import net.juniper.netconf.adapter.huawei.secPolicy.rule.Rule;
+import net.juniper.netconf.adapter.huawei.secPolicy.model.rules.Rule;
 
 import java.util.List;
 

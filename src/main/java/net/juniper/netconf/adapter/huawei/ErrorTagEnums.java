@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * 错误类型枚举
  *
  * @author zifangsky
- * @date 21/2/4
+ * @date 2021/2/4
  * @since 1.0.0
  */
 public enum ErrorTagEnums {

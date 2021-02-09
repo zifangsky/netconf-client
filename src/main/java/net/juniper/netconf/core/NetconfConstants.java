@@ -31,6 +31,11 @@ public class NetconfConstants {
      */
     public static final String URN_IETF_PARAMS_NETCONF_BASE_1_0 = "urn:ietf:params:netconf:base:1.0";
 
+    /**
+     * URN for Yang
+     */
+    public static final String URN_IETF_XML_NS_YANG_1 = "urn:ietf:params:xml:ns:yang:1";
+
     public static final String EMPTY_LINE = "";
     public static final String LF = "\n";
 

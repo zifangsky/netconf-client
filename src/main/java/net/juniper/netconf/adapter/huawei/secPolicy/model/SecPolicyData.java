@@ -1,4 +1,4 @@
-package net.juniper.netconf.adapter.huawei.secPolicy;
+package net.juniper.netconf.adapter.huawei.secPolicy.model;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import lombok.Data;

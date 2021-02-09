@@ -1,4 +1,4 @@
-package net.juniper.netconf.adapter.huawei.secPolicy;
+package net.juniper.netconf.adapter.huawei.secPolicy.model;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
@@ -38,7 +38,7 @@ public class StaticPolicyGroup {
          * 表示安全策略组的使能状态，取值"true"表示使能，取值"false"表示不使能。
          */
         @JacksonXmlProperty(localName = "enable")
-        private boolean enable;
+        private Boolean enable;
 
         /**
          * 表示安全策略组的描述信息

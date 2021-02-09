@@ -1,15 +1,16 @@
 package net.juniper.netconf.core;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import net.juniper.netconf.core.model.RpcReply;
 import net.juniper.netconf.core.enums.DefaultOperationEnums;
 import net.juniper.netconf.core.enums.ErrorOptionEnums;
 import net.juniper.netconf.core.enums.TargetEnums;
 import net.juniper.netconf.core.enums.TestOptionEnums;
 import net.juniper.netconf.core.exception.NetconfException;
 import net.juniper.netconf.core.model.HelloRpc;
+import net.juniper.netconf.core.model.RpcReply;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.BufferedReader;
@@ -28,8 +29,11 @@ import static net.juniper.netconf.core.NetconfSession.HELLO_RPC_REPLY_FLAG;
  * @since 1.0.0
  */
 public class DefaultRpcManager implements RpcManager {
-    public static ThreadLocal<XmlMapper> XMLMAPPER_RESOURCES = ThreadLocal.withInitial(XmlMapper::new);
-
+    public static ThreadLocal<XmlMapper> XMLMAPPER_RESOURCES = ThreadLocal.withInitial(() -> {
+        XmlMapper xmlMapper = new XmlMapper();
+        xmlMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        return xmlMapper;
+    });
     /**
      * 通过 NETCONF 执行命令
      */
@@ -69,7 +73,7 @@ public class DefaultRpcManager implements RpcManager {
                                                             "{2}" +
                                                             "{3}" +
                                                             "<config>" +
-                                                                "<{4}/>" +
+                                                                "{4}" +
                                                             "</config>" +
                                                         "</edit-config>";
     /**
@@ -252,18 +256,18 @@ public class DefaultRpcManager implements RpcManager {
     }
 
     @Override
-    public String editConfig(TargetEnums source, String configTree) throws IOException {
-        return this.editConfig(source, null, null, ErrorOptionEnums.ROLLBACK_ON_ERROR, configTree);
+    public String editConfig(TargetEnums target, String configTree) throws IOException {
+        return this.editConfig(target, null, null, ErrorOptionEnums.ROLLBACK_ON_ERROR, configTree);
     }
 
     @Override
-    public String editConfig(TargetEnums source, DefaultOperationEnums defaultOperation, TestOptionEnums testOption, ErrorOptionEnums errorOption, String configTree) throws IOException {
+    public String editConfig(TargetEnums target, DefaultOperationEnums defaultOperation, TestOptionEnums testOption, ErrorOptionEnums errorOption, String configTree) throws IOException {
         if(StringUtils.isBlank(configTree)){
             throw new IllegalArgumentException("Parameter 'configTree' cannot be empty.");
         }
 
-        if(source == null){
-            source = TargetEnums.RUNNING;
+        if(target == null){
+            target = TargetEnums.RUNNING;
         }
         String defaultOperationStr = "";
         if(defaultOperation != null){
@@ -278,7 +282,7 @@ public class DefaultRpcManager implements RpcManager {
             testOptionStr = MessageFormat.format(EDIT_CONFIG_ERROR_OPTION, errorOption.getCode());
         }
 
-        String rpcContent = MessageFormat.format(EDIT_CONFIG_TEMPLATE, source.getCode(), defaultOperationStr, testOptionStr, errorOptionStr, configTree);
+        String rpcContent = MessageFormat.format(EDIT_CONFIG_TEMPLATE, target.getCode(), defaultOperationStr, testOptionStr, errorOptionStr, configTree);
         return this.executeRpc(rpcContent);
     }
 

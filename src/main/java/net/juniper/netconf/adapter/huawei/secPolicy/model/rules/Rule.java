@@ -1,7 +1,8 @@
-package net.juniper.netconf.adapter.huawei.secPolicy.rule;
+package net.juniper.netconf.adapter.huawei.secPolicy.model.rules;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import lombok.Data;
+import net.juniper.netconf.adapter.huawei.ActionEnums;
 
 /**
  * <p>表示安全策略的规则，仅用于容纳子节点，自身无数据意义。</p>
@@ -36,13 +37,13 @@ public class Rule {
      * 表示安全策略规则的动作。取值"true"，表示允许匹配该规则的流量通过；取值"false"，表示禁止匹配该规则的流量通过。如果该动作未赋值，则该策略规则不生效。
      */
     @JacksonXmlProperty(localName = "action")
-    private String action = "";
+    private ActionEnums action = ActionEnums.NOT_ACTIVE;
 
     /**
      * 表示安全策略规则的使能状态，取值"true"表示使能，取值"false"表示不使能。默认值是使能。
      */
     @JacksonXmlProperty(localName = "enable")
-    private boolean enable = true;
+    private Boolean enable;
 
     /**
      * 表示在安全策略阻断流量时，向源或者目的发送反馈报文。
@@ -102,13 +103,13 @@ public class Rule {
      * 表示安全策略的策略命中日志开关，取值"true"表示记录，取值"false"表示不记录。默认值是不记录。
      */
     @JacksonXmlProperty(localName = "policy-log")
-    private boolean policyLog;
+    private Boolean policyLog;
 
     /**
      * 表示安全策略的会话日志开关，取值"true"表示记录，取值"false"表示不记录。默认值是不记录。
      */
     @JacksonXmlProperty(localName = "session-log")
-    private boolean sessionLog;
+    private Boolean sessionLog;
 
     /**
      * 表示安全策略规则配置基于策略的会话老化时间。整数形式，取值范围为1～65535，单位为秒。
@@ -127,4 +128,18 @@ public class Rule {
      */
     @JacksonXmlProperty(localName = "profile")
     private Profile profile;
+
+    public Rule() {
+    }
+
+    public Rule(String name, String desc, ActionEnums action, String sourceZone, String destinationZone, Address sourceIp, Address destinationIp, Service service) {
+        this.name = name;
+        this.desc = desc;
+        this.action = action;
+        this.sourceZone = sourceZone;
+        this.destinationZone = destinationZone;
+        this.sourceIp = sourceIp;
+        this.destinationIp = destinationIp;
+        this.service = service;
+    }
 }

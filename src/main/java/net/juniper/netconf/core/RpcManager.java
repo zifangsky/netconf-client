@@ -214,12 +214,12 @@ public interface RpcManager {
      * @author zifangsky
      * @date 2021/2/8
      * @since 1.0.0
-     * @param source source节点
+     * @param target target节点
      * @param configTree config正文部分
      * @return result of the command, as a String.
      * @throws IOException If there are errors communicating with the netconf server.
      */
-    String editConfig(TargetEnums source, String configTree) throws IOException;
+    String editConfig(TargetEnums target, String configTree) throws IOException;
 
     /**
      * 执行&#60;edit-config&#62;命令，示例：
@@ -241,7 +241,7 @@ public interface RpcManager {
      * @author zifangsky
      * @date 2021/2/8
      * @since 1.0.0
-     * @param source source节点
+     * @param target target节点
      * @param defaultOperation default-operation节点
      * @param testOption test-option节点
      * @param errorOption error-option节点
@@ -249,7 +249,7 @@ public interface RpcManager {
      * @return result of the command, as a String.
      * @throws IOException If there are errors communicating with the netconf server.
      */
-    String editConfig(TargetEnums source, DefaultOperationEnums defaultOperation,
+    String editConfig(TargetEnums target, DefaultOperationEnums defaultOperation,
                       TestOptionEnums testOption, ErrorOptionEnums errorOption, String configTree) throws IOException;
 
     /**

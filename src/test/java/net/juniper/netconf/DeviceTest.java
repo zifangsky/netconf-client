@@ -1,9 +1,9 @@
 package net.juniper.netconf;
 
 import net.juniper.netconf.adapter.huawei.HuaWeiConstants;
-import net.juniper.netconf.adapter.huawei.secPolicy.SecPolicy;
-import net.juniper.netconf.adapter.huawei.secPolicy.StaticPolicyGroup;
-import net.juniper.netconf.adapter.huawei.secPolicy.VirtualSystem;
+import net.juniper.netconf.adapter.huawei.secPolicy.model.SecPolicy;
+import net.juniper.netconf.adapter.huawei.secPolicy.model.StaticPolicyGroup;
+import net.juniper.netconf.adapter.huawei.secPolicy.model.VirtualSystem;
 import net.juniper.netconf.core.DefaultRpcManager;
 import net.juniper.netconf.core.Device;
 import net.juniper.netconf.core.exception.NetconfException;
@@ -93,7 +93,7 @@ public class DeviceTest {
 //        xmlMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
         String xmlStr = DefaultRpcManager.XMLMAPPER_RESOURCES.get().writeValueAsString(secPolicy)
-                .replace("<sec-policy>", "<sec-policy xmlns=\"" + HuaWeiConstants.NAMESPACE_HUAWEI + "\">");
+                .replace("<sec-policy>", "<sec-policy xmlns=\"" + HuaWeiConstants.URN_HUAWEI_SECURITY_POLICY + "\">");
 //        System.out.println(xmlStr);
 
         //执行

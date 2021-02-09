@@ -73,7 +73,7 @@ public class Device implements AutoCloseable {
     private final boolean strictHostKeyChecking;
     private final String hostKeysFileName;
 
-    private final List<String> netconfCapabilities;
+    private final List<String> netConfCapabilities;
 
     private ChannelSubsystem sshChannel;
     private Session sshSession;
@@ -92,7 +92,7 @@ public class Device implements AutoCloseable {
                   String pemKeyFile,
                   Boolean strictHostKeyChecking,
                   String hostKeysFileName,
-                  List<String> netconfCapabilities
+                  List<String> netConfCapabilities
     ) throws NetconfException {
         this.hostName = hostName;
         this.port = (port != null) ? port : DEFAULT_NETCONF_PORT;
@@ -121,7 +121,7 @@ public class Device implements AutoCloseable {
             throw new NetconfException("Strict Host Key checking requires setting the hostKeysFileName");
         }
 
-        this.netconfCapabilities = (netconfCapabilities != null) ? netconfCapabilities : this.getDefaultClientCapabilities();
+        this.netConfCapabilities = (netConfCapabilities != null) ? netConfCapabilities : this.applyDefaultClientCapabilitiesIfNecessary();
         this.sshClient = (sshClient != null) ? sshClient : new JSch();
     }
 
@@ -308,8 +308,9 @@ public class Device implements AutoCloseable {
      *
      * @return List of default client capabilities.
      */
-    private List<String> getDefaultClientCapabilities() {
+    protected List<String> applyDefaultClientCapabilitiesIfNecessary() {
         List<String> defaultCap = new ArrayList<>();
+
         defaultCap.add(NetconfConstants.URN_IETF_PARAMS_NETCONF_BASE_1_0);
         defaultCap.add(NetconfConstants.URN_IETF_PARAMS_NETCONF_BASE_1_0 + "#candidate");
         defaultCap.add(NetconfConstants.URN_IETF_PARAMS_NETCONF_BASE_1_0 + "#confirmed-commit");
@@ -364,7 +365,7 @@ public class Device implements AutoCloseable {
         try {
             sshChannel = (ChannelSubsystem) sshSession.openChannel("subsystem");
             sshChannel.setSubsystem("netconf");
-            return new NetconfSession(sshChannel, connectionTimeout, commandTimeout, this.netconfCapabilities);
+            return new NetconfSession(sshChannel, connectionTimeout, commandTimeout, this.netConfCapabilities);
         } catch (JSchException | IOException e) {
             throw new NetconfException("Failed to create Netconf session:" + e.getMessage());
         }
@@ -435,40 +436,6 @@ public class Device implements AutoCloseable {
         if (netconfSession == null) {
             throw new IllegalStateException("Cannot execute RPC, you need to establish a connection first.");
         }
-    }
-
-    /**
-     * Creates a new RPC attribute for use in the default rpc xml envelope used in all rpc executions. Setting
-     * the "xmlns" attribute will override the default namespace attribute, otherwise the value in
-     * NetconfConstants.URN_XML_NS_NETCONF_BASE_1_0 will be used as the default namespace.
-     *
-     * @param name  The name of the new RPC attribute.
-     * @param value The value of the new RPC attribute.
-     * @throws NullPointerException If the device connection has not been made yet.
-     */
-    public void addRpcAttribute(String name, String value) {
-        this.checkNetConfSessionEstablished();
-        this.netconfSession.addRpcAttribute(name, value);
-    }
-
-    /**
-     * Removes an RPC attribute from the default rpc xml envelope used in all rpc executions.
-     *
-     * @return The value of the removed attribute.
-     * @throws NullPointerException If the device connection has not been made yet.
-     */
-    public String removeRpcAttribute(String name) {
-        this.checkNetConfSessionEstablished();
-        return this.netconfSession.removeRpcAttribute(name);
-    }
-
-    /**
-     * Clears all the RPC attributes from the default rpc xml envelope used in all rpc executions. The default namespace
-     * value NetconfConstants.URN_XML_NS_NETCONF_BASE_1_0 will still be present in the xml envelope.
-     */
-    public void clearRpcAttributes() {
-        this.checkNetConfSessionEstablished();
-        netconfSession.removeAllRpcAttributes();
     }
 
 }

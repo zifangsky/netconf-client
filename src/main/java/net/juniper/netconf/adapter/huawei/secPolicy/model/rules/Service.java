@@ -1,4 +1,4 @@
-package net.juniper.netconf.adapter.huawei.secPolicy.rule;
+package net.juniper.netconf.adapter.huawei.secPolicy.model.rules;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
@@ -34,4 +34,15 @@ public class Service {
      */
     @JacksonXmlProperty(localName = "service-items-exclude")
     private ServiceItemsExclude serviceItemsExclude;
+
+    public Service() {
+    }
+
+    public Service(List<String> serviceObject) {
+        this.serviceObject = serviceObject;
+    }
+
+    public Service(ServiceItems serviceItems) {
+        this.serviceItems = serviceItems;
+    }
 }

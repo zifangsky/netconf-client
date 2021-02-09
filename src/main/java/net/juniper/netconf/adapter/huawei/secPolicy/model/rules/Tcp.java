@@ -1,4 +1,4 @@
-package net.juniper.netconf.adapter.huawei.secPolicy.rule;
+package net.juniper.netconf.adapter.huawei.secPolicy.model.rules;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import lombok.Data;
@@ -23,4 +23,12 @@ public class Tcp {
      */
     @JacksonXmlProperty(localName = "dest-port")
     private String destPort;
+
+    public Tcp() {
+    }
+
+    public Tcp(String sourcePort, String destPort) {
+        this.sourcePort = sourcePort;
+        this.destPort = destPort;
+    }
 }

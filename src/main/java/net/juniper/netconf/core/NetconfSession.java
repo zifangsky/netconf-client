@@ -16,16 +16,16 @@ import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.JSchException;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import net.juniper.netconf.core.model.RpcReply;
 import net.juniper.netconf.core.exception.NetconfException;
 import net.juniper.netconf.core.model.HelloRpc;
+import net.juniper.netconf.core.model.RpcReply;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
 import java.net.SocketTimeoutException;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -103,11 +103,7 @@ public class NetconfSession {
      */
     private boolean lastReplyHasWarning;
     /**
-     * 手动指定<rpc>层级的属性
-     */
-    private final Map<String, String> rpcAttrMap = new ConcurrentHashMap<>();
-    /**
-     * 缓存<rpc>层级的属性（一旦缓存成功就不再更改）
+     * <rpc>层级的属性
      */
     private String rpcAttributes;
     /**
@@ -119,11 +115,34 @@ public class NetconfSession {
      */
     public static final int BUFFER_SIZE = 9 * 1024;
 
-    public NetconfSession(Channel netConfChannel, int timeout, List<String> netconfCapabilities) throws IOException {
-        this(netConfChannel, timeout, timeout, netconfCapabilities);
+    /**
+     * @param netConfChannel channel
+     * @param timeout 连接超时时间
+     * @param netConfCapabilities 客户端支持的能力
+     */
+    public NetconfSession(Channel netConfChannel, int timeout, List<String> netConfCapabilities) throws IOException {
+        this(netConfChannel, timeout, timeout, netConfCapabilities);
     }
 
-    public NetconfSession(Channel netConfChannel, int connectionTimeout, int commandTimeout, List<String> netconfCapabilities) throws IOException {
+    /**
+     * @param netConfChannel channel
+     * @param connectionTimeout 连接超时时间
+     * @param commandTimeout RPC命令的执行超时时间
+     * @param netConfCapabilities 客户端支持的能力
+     */
+    public NetconfSession(Channel netConfChannel, int connectionTimeout, int commandTimeout, List<String> netConfCapabilities) throws IOException {
+        this(netConfChannel, connectionTimeout, commandTimeout, netConfCapabilities, null);
+    }
+
+    /**
+     * @param netConfChannel channel
+     * @param connectionTimeout 连接超时时间
+     * @param commandTimeout RPC命令的执行超时时间
+     * @param netConfCapabilities 客户端支持的能力
+     * @param rpcAttrMap 手动指定<rpc>层级的属性
+     */
+    public NetconfSession(Channel netConfChannel, int connectionTimeout, int commandTimeout,
+                          List<String> netConfCapabilities, Map<String, String> rpcAttrMap) throws IOException {
         this.stdInStreamFromDevice = netConfChannel.getInputStream();
         this.stdOutStreamToDevice = netConfChannel.getOutputStream();
         try {
@@ -134,8 +153,14 @@ public class NetconfSession {
         }
         this.commandTimeout = commandTimeout;
 
+        //初始化rpcAttributes
+        if(rpcAttrMap == null){
+            rpcAttrMap = this.applyDefaultRpcAttrMapIfNecessary();
+        }
+        this.initRpcAttributes(rpcAttrMap);
+
         //发送<hello>报文
-        String helloRpc = createHelloRpc(netconfCapabilities);
+        String helloRpc = createHelloRpc(netConfCapabilities);
         sendHello(helloRpc);
     }
 
@@ -229,6 +254,20 @@ public class NetconfSession {
     }
 
     /**
+     * 如果必要生成默认的rpcAttrMap
+     * @author zifangsky
+     * @date 2021/2/9
+     * @since 1.0.0
+     * @return java.util.Map<java.lang.String,java.lang.String>
+     */
+    protected Map<String, String> applyDefaultRpcAttrMapIfNecessary() {
+        Map<String, String> defaultRpcAttrMap = new LinkedHashMap<>(4);
+
+        defaultRpcAttrMap.put("xmlns", NetconfConstants.URN_XML_NS_NETCONF_BASE_1_0);
+        return defaultRpcAttrMap;
+    }
+
+    /**
      * 发送hello报文
      */
     private void sendHello(String hello) throws IOException {
@@ -286,7 +325,7 @@ public class NetconfSession {
         // RFC conformance for XML type, namespaces and message ids for RPCs
         int newMessageId = messageId.incrementAndGet();
 
-        rpc = rpc.replace("<rpc>", "<rpc" + this.getRpcAttributes() + " message-id=\"" + newMessageId + "\">").trim();
+        rpc = rpc.replace("<rpc>", "<rpc" + this.rpcAttributes + " message-id=\"" + newMessageId + "\">").trim();
         if (!rpc.contains(NetconfConstants.XML_VERSION)) {
             rpc = NetconfConstants.XML_VERSION + rpc;
         }
@@ -298,27 +337,15 @@ public class NetconfSession {
     }
 
     /**
-     * 获取rpc层级的属性，如果没有手动指定，则设置一个默认的xmlns
+     * 初始化rpc层级的属性
      */
-    private synchronized String getRpcAttributes() {
-        if(this.rpcAttributes == null) {
-            boolean useDefaultNamespace = true;
-            StringBuilder attributes = new StringBuilder();
-
-            for (Map.Entry<String, String> attribute : this.rpcAttrMap.entrySet()) {
-                attributes.append(String.format(" %1s=\"%2s\"", attribute.getKey(), attribute.getValue()));
-
-                if ("xmlns".equals(attribute.getKey())) {
-                    useDefaultNamespace = false;
-                }
-            }
-
-            if (useDefaultNamespace) {
-                attributes.append(" xmlns=\"" + NetconfConstants.URN_XML_NS_NETCONF_BASE_1_0 + "\"");
-            }
-            this.rpcAttributes = attributes.toString();
+    private void initRpcAttributes(Map<String, String> rpcAttrMap) {
+        StringBuilder attributes = new StringBuilder();
+        for (Map.Entry<String, String> attribute : rpcAttrMap.entrySet()) {
+            attributes.append(String.format(" %1s=\"%2s\"", attribute.getKey(), attribute.getValue()));
         }
-        return this.rpcAttributes;
+
+        this.rpcAttributes = attributes.toString();
     }
 
     /**
@@ -425,39 +452,5 @@ public class NetconfSession {
         if(ok || (errorSeverity == null)){
             this.lastReplyIsSuccess = true;
         }
-    }
-
-    /**
-     * Adds an Attribute to the set of RPC attributes used in the RPC XML envelope. Resets the rpcAttributes value
-     * to null for generation on the next request.
-     *
-     * @param name The attribute name for the new attribute.
-     * @param value The attribute value for the new attribute.
-     */
-    public synchronized void addRpcAttribute(String name, String value) {
-        rpcAttrMap.put(name, value);
-        rpcAttributes = null;
-    }
-
-    /**
-     * Removes an attribute from the set of RPC attributes used in the RPC XML envelope. Resets the rpcAttributes value
-     * to null for generation on the next request.
-     *
-     * @param name The attribute name to be removed.
-     *
-     * @return The value of the removed attribute.
-     */
-    public synchronized String removeRpcAttribute(String name) {
-        rpcAttributes = null;
-        return rpcAttrMap.remove(name);
-    }
-
-    /**
-     * Clears all the RPC attributes from the set of RPC attributes used in the RPC XML envelope. The set will be empty
-     * after this call returns. Resets the rpcAttributes value to null for generation on the next request.
-     */
-    public synchronized void removeAllRpcAttributes() {
-        rpcAttrMap.clear();
-        rpcAttributes = null;
     }
 }
