@@ -37,7 +37,7 @@ public class Rule {
      * 表示安全策略规则的动作。取值"true"，表示允许匹配该规则的流量通过；取值"false"，表示禁止匹配该规则的流量通过。如果该动作未赋值，则该策略规则不生效。
      */
     @JacksonXmlProperty(localName = "action")
-    private ActionEnums action = ActionEnums.NOT_ACTIVE;
+    private ActionEnums action;
 
     /**
      * 表示安全策略规则的使能状态，取值"true"表示使能，取值"false"表示不使能。默认值是使能。
@@ -129,7 +129,17 @@ public class Rule {
     @JacksonXmlProperty(localName = "profile")
     private Profile profile;
 
+    /**
+     * 表示安全策略的命中次数。
+     */
+    @JacksonXmlProperty(localName = "hit-times")
+    private Long hitTimes;
+
     public Rule() {
+    }
+
+    public Rule(String name) {
+        this.name = name;
     }
 
     public Rule(String name, String desc, ActionEnums action, String sourceZone, String destinationZone, Address sourceIp, Address destinationIp, Service service) {

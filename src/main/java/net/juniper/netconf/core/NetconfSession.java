@@ -27,7 +27,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * A <code>NetconfSession</code> object is used to call the Netconf driver
@@ -109,7 +109,7 @@ public class NetconfSession {
     /**
      * 消息ID
      */
-    private AtomicInteger messageId = new AtomicInteger(0);
+    private AtomicLong messageId = new AtomicLong(0);
     /**
      * Bigger than inner buffer in BufferReader class
      */
@@ -323,7 +323,7 @@ public class NetconfSession {
      */
     private void sendRpcRequest(String rpc) throws IOException {
         // RFC conformance for XML type, namespaces and message ids for RPCs
-        int newMessageId = messageId.incrementAndGet();
+        long newMessageId = messageId.incrementAndGet();
 
         rpc = rpc.replace("<rpc>", "<rpc" + this.rpcAttributes + " message-id=\"" + newMessageId + "\">").trim();
         if (!rpc.contains(NetconfConstants.XML_VERSION)) {

@@ -36,6 +36,11 @@ public class DefaultPolicy {
     @JacksonXmlProperty(localName = "global-ip")
     private GlobalIp globalIp;
 
+    /**
+     * 表示安全策略的命中次数。
+     */
+    @JacksonXmlProperty(localName = "hit-times")
+    private Long hitTimes;
 
     /* 其他内部属性 */
 

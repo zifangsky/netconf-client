@@ -69,8 +69,25 @@ public class DeviceTest {
         System.out.println(xml);
     }
 
+    /**
+     * 删除安全策略配置
+     */
+    @Test
+    @DisplayName("删除安全策略配置")
+    public void deleteConfigCreateSecPolicy() throws Exception {
+        String xml = rpcManager.executeRpc("<edit-config><target><running/></target><error-option>rollback-on-error</error-option><config><sec-policy xmlns=\"urn:huawei:params:xml:ns:yang:huawei-security-policy\" xmlns:nc=\"urn:ietf:params:xml:ns:netconf:base:1.0\" xmlns:yang=\"urn:ietf:params:xml:ns:yang:1\"><vsys><name>public</name><static-policy><rule nc:operation=\"delete\"><name>test_by_code</name></rule></static-policy></vsys></sec-policy></config></edit-config>");
+        System.out.println(xml);
+    }
 
-
+    /**
+     * 查看安全策略的命中次数
+     */
+    @Test
+    @DisplayName("查看安全策略的命中次数")
+    public void getSecPolicyHitTimes() throws Exception {
+        String xml = rpcManager.executeRpc("<get><filter type=\"subtree\"><sec-policy-state xmlns=\"urn:huawei:params:xml:ns:yang:huawei-security-policy\"><vsys><name>public</name><static-policy/></vsys></sec-policy-state></filter></get>");
+        System.out.println(xml);
+    }
 
     /**
      * 查询安全策略组
