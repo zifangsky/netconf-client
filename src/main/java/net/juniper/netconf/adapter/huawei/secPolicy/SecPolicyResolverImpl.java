@@ -227,7 +227,8 @@ public class SecPolicyResolverImpl implements SecPolicyResolver {
      * @return java.lang.String
      */
     private String addNamespaceForSecPolicy(String secPolicyTree){
-        return secPolicyTree.replace("<sec-policy>", "<sec-policy" + this.operationAttributes + ">");
+        return secPolicyTree.replace("<sec-policy/>", "<sec-policy></sec-policy>")
+                .replace("<sec-policy>", "<sec-policy" + this.operationAttributes + ">");
     }
 
     /**
@@ -235,7 +236,8 @@ public class SecPolicyResolverImpl implements SecPolicyResolver {
      */
     private String addNamespaceForSecPolicyState(String secPolicyTree){
         //1. 将 <sec-policy> 替换成 <sec-policy-state>
-        secPolicyTree = secPolicyTree.replace("<sec-policy", "<sec-policy-state").replace("</sec-policy>", "</sec-policy-state>");
+        secPolicyTree = secPolicyTree.replace("<sec-policy/>", "<sec-policy></sec-policy>")
+                .replace("<sec-policy", "<sec-policy-state").replace("</sec-policy>", "</sec-policy-state>");
 
         //2. 添加指定的 namespace
         return secPolicyTree.replace("<sec-policy-state>", "<sec-policy-state" + this.operationAttributes + ">");

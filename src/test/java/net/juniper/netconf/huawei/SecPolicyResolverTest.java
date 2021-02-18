@@ -1,6 +1,7 @@
 package net.juniper.netconf.huawei;
 
 import net.juniper.netconf.adapter.huawei.ActionEnums;
+import net.juniper.netconf.adapter.huawei.DefaultVsysEnums;
 import net.juniper.netconf.adapter.huawei.secPolicy.SecPolicyResolver;
 import net.juniper.netconf.adapter.huawei.secPolicy.SecPolicyResolverImpl;
 import net.juniper.netconf.adapter.huawei.secPolicy.model.SecPolicy;
@@ -59,7 +60,7 @@ class SecPolicyResolverTest {
         SecPolicy secPolicy = new SecPolicy();
         List<VirtualSystem> vsys = new ArrayList<>();
         VirtualSystem vsy = new VirtualSystem();
-        vsy.setName("public");
+        vsy.setName(DefaultVsysEnums.PUBLIC.getCode());
 
         StaticPolicy staticPolicy = new StaticPolicy();
         //一条新策略
@@ -88,7 +89,7 @@ class SecPolicyResolverTest {
         SecPolicy secPolicy = new SecPolicy();
         List<VirtualSystem> vsys = new ArrayList<>();
         VirtualSystem vsy = new VirtualSystem();
-        vsy.setName("public");
+        vsy.setName(DefaultVsysEnums.PUBLIC.getCode());
 
         StaticPolicy staticPolicy = new StaticPolicy();
         //已有的一条策略
@@ -118,7 +119,7 @@ class SecPolicyResolverTest {
         SecPolicy secPolicy = new SecPolicy();
         List<VirtualSystem> vsys = new ArrayList<>();
         VirtualSystem vsy = new VirtualSystem();
-        vsy.setName("public");
+        vsy.setName(DefaultVsysEnums.PUBLIC.getCode());
 
         //只查询「静态安全策略」
         vsy.setStaticPolicy(new StaticPolicy());
@@ -140,7 +141,7 @@ class SecPolicyResolverTest {
         SecPolicy secPolicy = new SecPolicy();
         List<VirtualSystem> vsys = new ArrayList<>();
         VirtualSystem vsy = new VirtualSystem();
-        vsy.setName("public");
+        vsy.setName(DefaultVsysEnums.PUBLIC.getCode());
 
         StaticPolicy staticPolicy = new StaticPolicy();
         //提供需要删除策略的名称
@@ -166,7 +167,7 @@ class SecPolicyResolverTest {
         SecPolicy secPolicy = new SecPolicy();
         List<VirtualSystem> vsys = new ArrayList<>();
         VirtualSystem vsy = new VirtualSystem();
-        vsy.setName("public");
+        vsy.setName(DefaultVsysEnums.PUBLIC.getCode());
 
         //只查询「静态安全策略」的命中次数
 //        vsy.setStaticPolicy(new StaticPolicy());
