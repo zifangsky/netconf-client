@@ -12,4 +12,9 @@ public class HuaWeiConstants {
      * 安全策略
      */
     public static final String URN_HUAWEI_SECURITY_POLICY = "urn:huawei:params:xml:ns:yang:huawei-security-policy";
+
+    /**
+     * 静态映射
+     */
+    public static final String URN_HUAWEI_NAT_STATIC_MAPPING = "urn:huawei:yang:huawei-nat-static-mapping";
 }
