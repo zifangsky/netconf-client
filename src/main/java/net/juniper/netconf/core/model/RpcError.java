@@ -32,6 +32,12 @@ public class RpcError {
     private String errorSeverity;
 
     /**
+     * 标识错误的tag
+     */
+    @JacksonXmlProperty(localName = "error-app-tag")
+    private String errorAppTag;
+
+    /**
      * 标识出错的节点
      */
     @JacksonXmlProperty(localName = "error-path")
