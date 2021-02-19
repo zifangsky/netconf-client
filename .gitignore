@@ -24,5 +24,6 @@ logs/
 .DS_Store
 .factorypath
 settings.json
+mvnw*
 .mvn/
 .github/

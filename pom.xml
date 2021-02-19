@@ -5,20 +5,20 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>net.juniper.netconf</groupId>
+    <groupId>cn.zifangsky</groupId>
     <artifactId>netconf-java</artifactId>
-    <version>2.1.1.2</version>
+    <version>0.9.0</version>
     <packaging>jar</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <jar.main.class>net.juniper.netconf</jar.main.class>
+        <jar.main.class>cn.zifangsky.netconf</jar.main.class>
     </properties>
 
     <name>${project.groupId}:${project.artifactId}</name>
     <description>An API For NetConf client</description>
-    <url>https://github.com/Juniper/netconf-java</url>
+    <url>https://github.com/zifangsky/netconf-java</url>
 
     <licenses>
         <license>
@@ -29,6 +29,12 @@
 
     <developers>
         <developer>
+            <name>zifangsky</name>
+            <email>admin@zifangsky.cn</email>
+            <organization>zifangsky's blog</organization>
+            <organizationUrl>https://www.zifangsky.cn/</organizationUrl>
+        </developer>
+        <developer>
             <name>Juniper Networks</name>
             <email>jnpr-community-netdev@juniper.net</email>
             <organization>Juniper Networks</organization>
@@ -37,9 +43,9 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/Juniper/netconf-java.git</connection>
-        <developerConnection>scm:git:ssh://github.com:Juniper/netconf-java.git</developerConnection>
-        <url>https://github.com/Juniper/netconf-java/tree/master</url>
+        <connection>scm:git:git://github.com/zifangsky/netconf-java.git</connection>
+        <developerConnection>scm:git:ssh://github.com:zifangsky/netconf-java.git</developerConnection>
+        <url>https://github.com/zifangsky/netconf-java/tree/master</url>
     </scm>
 
     <build>
@@ -124,7 +130,7 @@
                                 <additionalOption>-Xdoclint:none</additionalOption>
                             </additionalOptions>
                             <stylesheet>java</stylesheet>
-                            <bottom><![CDATA[Copyright 2018, <a href="https://www.juniper.net">Juniper Networks, Inc.<a>]]> </bottom>
+                            <bottom><![CDATA[Copyright 2021, <a href="https://www.zifangsky.cn/">zifangsky's blog<a>]]> </bottom>
                         </configuration>
                     </execution>
                     <execution>
@@ -138,7 +144,7 @@
                             <reportOutputDirectory>${basedir}</reportOutputDirectory>
                             <destDir>javadoc</destDir>
                             <stylesheet>java</stylesheet>
-                            <bottom><![CDATA[Copyright 2018, <a href="https://www.juniper.net">Juniper Networks, Inc.<a>]]> </bottom>
+                            <bottom><![CDATA[Copyright 2021, <a href="https://www.zifangsky.cn/">zifangsky's blog<a>]]> </bottom>
                         </configuration>
                     </execution>
                 </executions>
@@ -210,25 +216,6 @@
             <artifactId>assertj-core</artifactId>
             <version>3.16.1</version>
             <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <version>1.9.5</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>3.3.3</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-junit-jupiter</artifactId>
-            <version>3.3.3</version>
-            <scope>compile</scope>
         </dependency>
 
         <dependency>
