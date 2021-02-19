@@ -1,5 +1,0 @@
-<rpc-reply xmlns="URN" xmlns:junos="URL">
-    <output>
-        operational-response
-    </output>
-</rpc-reply>
