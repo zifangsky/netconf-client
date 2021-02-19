@@ -1,10 +1,10 @@
 ## netconf-java
 
-This is a NETCONF Java library, and then plans to support multiple vendors, such as: Huawei firewall.
+This is a NETCONF Java library, and then we plan to support devices from multiple companies using the NETCONF protocol, such as: Huawei firewall.
 
 ## SUPPORT
 
-This project is cloned from [Juniper/netconf-java](https://github.com/Juniper/netconf-java), after a series of refactoring and adding new features, it is now maintained by [zifangsky](https://www.zifangsky.cn/).
+This repository is cloned from [Juniper/netconf-java](https://github.com/Juniper/netconf-java), after a series of refactoring and adding new features, it is now maintained by [zifangsky](https://www.zifangsky.cn/).
 
 To report bug-fixes, issues, suggestions, please visit [Issues](https://github.com/zifangsky/netconf-java/issues).
 
