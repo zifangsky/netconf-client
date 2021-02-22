@@ -9,6 +9,11 @@ package cn.zifangsky.netconf.adapter.huawei;
  */
 public class HuaWeiConstants {
     /**
+     * rm
+     */
+    public static final String HUAWEI_RM = "http://www.huawei.com/netconf/vrp/huawei-rm";
+
+    /**
      * 安全策略
      */
     public static final String URN_HUAWEI_SECURITY_POLICY = "urn:huawei:params:xml:ns:yang:huawei-security-policy";

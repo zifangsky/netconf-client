@@ -118,6 +118,16 @@ public class DeviceTest {
         System.out.println(xml);
     }
 
+    /**
+     * 获取路由状态
+     */
+    @Test
+    @DisplayName("获取路由状态")
+    public void getRouteState() throws Exception {
+        String xml = rpcManager.executeRpc("<get><filter type=\"subtree\"><rm xmlns=\"http://www.huawei.com/netconf/vrp/huawei-rm\" xmlns:nc=\"urn:ietf:params:xml:ns:netconf:base:1.0\" ></rm></filter></get>");
+        System.out.println(xml);
+    }
+
 
     @Test
     public void GIVEN_newDevice_WHEN_withNullUserName_THEN_throwsException() {
