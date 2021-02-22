@@ -4,7 +4,7 @@ This is a NETCONF Java library, and then we plan to support devices from multipl
 
 ## SUPPORT
 
-This repository is cloned from [Juniper/netconf-java](https://github.com/Juniper/netconf-java), after a series of refactoring and adding new features, it is now maintained by [zifangsky](https://www.zifangsky.cn/).
+This repository is forked from [Juniper/netconf-java](https://github.com/Juniper/netconf-java), after a series of refactoring and adding new features, it's now maintained by [zifangsky](https://www.zifangsky.cn/).
 
 To report bug-fixes, issues, suggestions, please visit [Issues](https://github.com/zifangsky/netconf-java/issues).
 

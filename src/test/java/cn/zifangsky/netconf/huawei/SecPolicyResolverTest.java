@@ -66,7 +66,7 @@ class SecPolicyResolverTest {
         //一条新策略
         ServiceItems item = new ServiceItems();
         item.setTcp(new Tcp("100 200 to 300 600", "700 888 to 999 1023"));
-        Rule newRule = new Rule("test_by_code", "通过程序自动下发配置", ActionEnums.TRUE, "untrust", "trust",
+        Rule newRule = new Rule("test_by_code_sec_policy", "通过程序自动下发配置", ActionEnums.TRUE, "untrust", "trust",
                 new Address("1.1.1.1/32", true), new Address("1.1.1.2/32", true), new Service(item));
 
         staticPolicy.setRule(Collections.singletonList(newRule));
@@ -96,7 +96,7 @@ class SecPolicyResolverTest {
         ServiceItems item = new ServiceItems();
         item.setTcp(new Tcp("100 200 to 300 600", "700 888 to 999 1023 to 1030"));
         //保持名称不变
-        Rule newRule = new Rule("test_by_code", "通过程序自动修改配置", ActionEnums.FALSE, "untrust", "trust",
+        Rule newRule = new Rule("test_by_code_sec_policy", "通过程序自动修改配置", ActionEnums.FALSE, "untrust", "trust",
                 new Address("1.1.1.1/32", true), new Address("1.1.1.2/32", true), new Service(item));
 
         staticPolicy.setRule(Collections.singletonList(newRule));
@@ -145,7 +145,7 @@ class SecPolicyResolverTest {
 
         StaticPolicy staticPolicy = new StaticPolicy();
         //提供需要删除策略的名称
-        Rule newRule = new Rule("test_by_code");
+        Rule newRule = new Rule("test_by_code_sec_policy");
 
         staticPolicy.setRule(Collections.singletonList(newRule));
         vsy.setStaticPolicy(staticPolicy);

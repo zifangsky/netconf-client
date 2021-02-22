@@ -1,5 +1,6 @@
 package cn.zifangsky.netconf.adapter.huawei.secPolicy.model.rules;
 
+import cn.zifangsky.netconf.adapter.huawei.ProtocolEnums;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import lombok.Data;
 
@@ -16,12 +17,12 @@ public class Protocol {
      * 表示安全策略中引用的协议ID，取值范围0-255。
      */
     @JacksonXmlProperty(localName = "protocol-id")
-    private Integer protocolId;
+    private ProtocolEnums protocolId;
 
     public Protocol() {
     }
 
-    public Protocol(Integer protocolId) {
+    public Protocol(ProtocolEnums protocolId) {
         this.protocolId = protocolId;
     }
 }

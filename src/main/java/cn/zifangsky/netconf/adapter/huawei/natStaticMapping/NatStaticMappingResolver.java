@@ -24,7 +24,7 @@ public interface NatStaticMappingResolver {
     boolean createNatStaticMapping(NatStaticMapping newNatStaticMapping) throws IOException;
 
     /**
-     * 修改静态映射（修改时会根据rule的名称匹配已有的策略规则）
+     * 修改静态映射（修改时会根据static-mapping的名称匹配已有的映射规则）
      * @author zifangsky
      * @date 2021/2/10
      * @since 1.0.0
@@ -40,7 +40,7 @@ public interface NatStaticMappingResolver {
      * @date 2021/2/10
      * @since 1.0.0
      * @param filter 筛选条件
-     * @return SecPolicy 结果
+     * @return 结果
      * @throws IOException If there are errors communicating with the netconf server.
      */
     NatStaticMapping getNatStaticMapping(NatStaticMapping filter) throws IOException;

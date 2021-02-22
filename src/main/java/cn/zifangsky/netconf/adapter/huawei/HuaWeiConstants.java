@@ -17,4 +17,9 @@ public class HuaWeiConstants {
      * 静态映射
      */
     public static final String URN_HUAWEI_NAT_STATIC_MAPPING = "urn:huawei:yang:huawei-nat-static-mapping";
+
+    /**
+     * NAT Server（服务器映射）
+     */
+    public static final String URN_HUAWEI_NAT_SERVER = "urn:huawei:params:xml:ns:yang:huawei-nat-server";
 }
