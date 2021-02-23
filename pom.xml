@@ -6,13 +6,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>cn.zifangsky</groupId>
-    <artifactId>netconf-java</artifactId>
+    <artifactId>netconf-client</artifactId>
     <version>0.9.0</version>
     <packaging>jar</packaging>
 
     <name>${project.groupId}:${project.artifactId}</name>
     <description>An API For NetConf client</description>
-    <url>https://github.com/zifangsky/netconf-java</url>
+    <url>https://github.com/zifangsky/netconf-client</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -62,9 +62,9 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/zifangsky/netconf-java.git</connection>
-        <developerConnection>scm:git:ssh://github.com:zifangsky/netconf-java.git</developerConnection>
-        <url>https://github.com/zifangsky/netconf-java/tree/master</url>
+        <connection>scm:git:git://github.com/zifangsky/netconf-client.git</connection>
+        <developerConnection>scm:git:ssh://github.com:zifangsky/netconf-client.git</developerConnection>
+        <url>https://github.com/zifangsky/netconf-client/tree/master</url>
     </scm>
 
     <dependencies>

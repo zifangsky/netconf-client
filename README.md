@@ -21,7 +21,7 @@ To report bug-fixes, issues, suggestions, please visit [Issues](https://github.c
 ```xml
 <dependency>
     <groupId>cn.zifangsky</groupId>
-    <artifactId>netconf-java</artifactId>
+    <artifactId>netconf-client</artifactId>
     <version>0.9.0</version>
 </dependency>
 ```
@@ -30,7 +30,7 @@ To report bug-fixes, issues, suggestions, please visit [Issues](https://github.c
 
 - Download Source Code for the required release
 - Compile the code and install the jar to maven **local repository**, using `mvn install`
-- Use the netconf-java dependency file from maven local repository
+- Use the netconf-client dependency file from maven local repository
 
 
 
