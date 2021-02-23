@@ -1,6 +1,6 @@
 package cn.zifangsky.netconf.adapter.huawei.secPolicy.model.rules;
 
-import cn.zifangsky.netconf.adapter.huawei.ProtocolEnums;
+import cn.zifangsky.netconf.core.enums.ProtocolEnums;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import lombok.Data;
 

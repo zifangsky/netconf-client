@@ -1,4 +1,4 @@
-package cn.zifangsky.netconf.adapter.huawei;
+package cn.zifangsky.netconf.core.enums;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -15,91 +15,92 @@ public enum ProtocolEnums {
     /**
      * ICMP
      */
-    ICMP(1),
+    ICMP(1, "ICMP"),
     /**
      * IGMP
      */
-    IGMP(2),
+    IGMP(2, "IGMP"),
     /**
      * GGP
      */
-    GGP(3),
+    GGP(3, "GGP"),
     /**
      * IPv4
      */
-    IP_V4(4),
+    IP_V4(4, "IPv4"),
     /**
      * ST
      */
-    ST(5),
+    ST(5, "ST"),
     /**
      * TCP
      */
-    TCP(6),
+    TCP(6, "TCP"),
     /**
      * CBT
      */
-    CBT(7),
+    CBT(7, "CBT"),
     /**
      * EGP
      */
-    EGP(8),
+    EGP(8, "EGP"),
     /**
      * IGP
      */
-    IGP(9),
+    IGP(9, "IGP"),
     /**
      * UDP
      */
-    UDP(17),
+    UDP(17, "UDP"),
     /**
      * RDP
      */
-    RDP(27),
+    RDP(27, "RDP"),
     /**
      * IPv6
      */
-    IP_V6(41),
+    IP_V6(41, "IPv6"),
     /**
      * GRE
      */
-    GRE(47),
+    GRE(47, "GRE"),
     /**
      * ESP
      */
-    ESP(50),
+    ESP(50, "ESP"),
     /**
      * AH
      */
-    AH(51),
+    AH(51, "AH"),
     /**
      * ICMPv6
      */
-    ICMP_V6(58),
+    ICMP_V6(58, "ICMPv6"),
     /**
      * EIGRP
      */
-    EIGRP(88),
+    EIGRP(88, "EIGRP"),
     /**
      * OSPF
      */
-    OSPF(89),
+    OSPF(89, "OSPF"),
     /**
      * VRRP
      */
-    VRRP(112),
+    VRRP(112, "VRRP"),
     /**
      * L2TP
      */
-    L2TP(115),
+    L2TP(115, "L2TP"),
     /**
      * SCTP
      */
-    SCTP(132),
+    SCTP(132, "SCTP"),
     ;
 
-    ProtocolEnums(int code) {
+    ProtocolEnums(int code, String name) {
         this.code = code;
+        this.name = name;
     }
 
     /**
@@ -107,9 +108,15 @@ public enum ProtocolEnums {
      */
     private int code;
 
+    private String name;
+
     @JsonValue
     public int getCode() {
         return code;
+    }
+
+    public String getName() {
+        return name;
     }
 
     @JsonCreator

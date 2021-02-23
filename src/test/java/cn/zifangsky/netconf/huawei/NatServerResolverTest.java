@@ -1,7 +1,7 @@
 package cn.zifangsky.netconf.huawei;
 
 import cn.zifangsky.netconf.adapter.huawei.DefaultVsysEnums;
-import cn.zifangsky.netconf.adapter.huawei.ProtocolEnums;
+import cn.zifangsky.netconf.core.enums.ProtocolEnums;
 import cn.zifangsky.netconf.adapter.huawei.natServer.NatServerResolver;
 import cn.zifangsky.netconf.adapter.huawei.natServer.NatServerResolverImpl;
 import cn.zifangsky.netconf.adapter.huawei.natServer.model.*;

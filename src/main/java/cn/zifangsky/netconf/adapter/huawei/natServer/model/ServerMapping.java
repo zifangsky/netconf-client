@@ -1,6 +1,6 @@
 package cn.zifangsky.netconf.adapter.huawei.natServer.model;
 
-import cn.zifangsky.netconf.adapter.huawei.ProtocolEnums;
+import cn.zifangsky.netconf.core.enums.ProtocolEnums;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import lombok.Data;
 
