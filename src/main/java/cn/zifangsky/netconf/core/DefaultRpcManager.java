@@ -29,7 +29,7 @@ import static cn.zifangsky.netconf.core.NetconfSession.HELLO_RPC_REPLY_FLAG;
  * @since 1.0.0
  */
 public class DefaultRpcManager implements RpcManager {
-    public static ThreadLocal<XmlMapper> XMLMAPPER_RESOURCES = ThreadLocal.withInitial(() -> {
+    public static final ThreadLocal<XmlMapper> XMLMAPPER_RESOURCES = ThreadLocal.withInitial(() -> {
         XmlMapper xmlMapper = new XmlMapper();
         xmlMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         return xmlMapper;

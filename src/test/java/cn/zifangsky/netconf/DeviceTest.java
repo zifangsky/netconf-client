@@ -1,20 +1,18 @@
 package cn.zifangsky.netconf;
 
-import cn.zifangsky.netconf.adapter.huawei.secPolicy.model.SecPolicy;
-import cn.zifangsky.netconf.core.Device;
-import cn.zifangsky.netconf.core.exception.NetconfException;
 import cn.zifangsky.netconf.adapter.huawei.HuaWeiConstants;
+import cn.zifangsky.netconf.adapter.huawei.secPolicy.model.SecPolicy;
 import cn.zifangsky.netconf.adapter.huawei.secPolicy.model.StaticPolicyGroup;
 import cn.zifangsky.netconf.adapter.huawei.secPolicy.model.VirtualSystem;
 import cn.zifangsky.netconf.core.DefaultRpcManager;
+import cn.zifangsky.netconf.core.Device;
+import cn.zifangsky.netconf.core.exception.NetconfException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayName("测试与防火墙的各种交互")
 public class DeviceTest {
@@ -128,18 +126,4 @@ public class DeviceTest {
         System.out.println(xml);
     }
 
-
-    @Test
-    public void GIVEN_newDevice_WHEN_withNullUserName_THEN_throwsException() {
-        assertThatThrownBy(() -> Device.builder().hostName("foo").build())
-                .isInstanceOf(NullPointerException.class)
-                .hasMessage("userName is marked @NonNull but is null");
-    }
-
-    @Test
-    public void GIVEN_newDevice_WHEN_withHostName_THEN_throwsException() {
-        assertThatThrownBy(() -> Device.builder().userName("foo").build())
-                .isInstanceOf(NullPointerException.class)
-                .hasMessage("hostName is marked @NonNull but is null");
-    }
 }

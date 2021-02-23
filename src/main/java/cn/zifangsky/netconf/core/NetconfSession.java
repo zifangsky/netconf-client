@@ -49,7 +49,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 @Slf4j
 public class NetconfSession {
-    private static ThreadLocal<XmlMapper> XMLMAPPER_RESOURCES = ThreadLocal.withInitial(XmlMapper::new);
+    private static final ThreadLocal<XmlMapper> XMLMAPPER_RESOURCES = ThreadLocal.withInitial(XmlMapper::new);
 
     /**
      * hello返回报文的标识
