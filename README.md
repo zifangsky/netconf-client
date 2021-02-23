@@ -1,4 +1,4 @@
-## netconf-java
+# netconf-client
 
 This is a NETCONF Java library, and then we plan to support devices from multiple companies using the NETCONF protocol, such as: Huawei firewall.
 
@@ -6,7 +6,7 @@ This is a NETCONF Java library, and then we plan to support devices from multipl
 
 This repository is forked from [Juniper/netconf-java](https://github.com/Juniper/netconf-java), after a series of refactoring and adding new features, it's now maintained by [zifangsky](https://www.zifangsky.cn/).
 
-To report bug-fixes, issues, suggestions, please visit [Issues](https://github.com/zifangsky/netconf-java/issues).
+To report bug-fixes, issues, suggestions, please visit [Issues](https://github.com/zifangsky/netconf-client/issues).
 
 ## REQUIREMENTS
 
