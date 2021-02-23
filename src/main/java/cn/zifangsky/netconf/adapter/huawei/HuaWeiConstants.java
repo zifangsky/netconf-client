@@ -27,4 +27,9 @@ public class HuaWeiConstants {
      * NAT Server（服务器映射）
      */
     public static final String URN_HUAWEI_NAT_SERVER = "urn:huawei:params:xml:ns:yang:huawei-nat-server";
+
+    /**
+     * 安全区域
+     */
+    public static final String URN_HUAWEI_SECURITY_ZONE = "urn:huawei:params:xml:ns:yang:huawei-security-zone";
 }

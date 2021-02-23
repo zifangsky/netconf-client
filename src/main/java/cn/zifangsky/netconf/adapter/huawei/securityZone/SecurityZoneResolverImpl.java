@@ -1,9 +1,9 @@
-package cn.zifangsky.netconf.adapter.huawei.natServer;
+package cn.zifangsky.netconf.adapter.huawei.securityZone;
 
 import cn.zifangsky.netconf.adapter.huawei.HuaWeiConstants;
-import cn.zifangsky.netconf.adapter.huawei.natServer.model.NatServer;
-import cn.zifangsky.netconf.adapter.huawei.natServer.model.NatServerData;
-import cn.zifangsky.netconf.adapter.huawei.natServer.model.ServerMapping;
+import cn.zifangsky.netconf.adapter.huawei.securityZone.model.SecurityZone;
+import cn.zifangsky.netconf.adapter.huawei.securityZone.model.SecurityZoneData;
+import cn.zifangsky.netconf.adapter.huawei.securityZone.model.ZoneInstance;
 import cn.zifangsky.netconf.core.NetconfConstants;
 import cn.zifangsky.netconf.core.RpcManager;
 import cn.zifangsky.netconf.core.enums.ErrorOptionEnums;
@@ -21,29 +21,29 @@ import java.util.Map;
 import static cn.zifangsky.netconf.core.DefaultRpcManager.XMLMAPPER_RESOURCES;
 
 /**
- * NAT Server（服务器映射）相关方法
+ * 安全区域相关方法
  *
  * @author zifangsky
- * @date 2021/2/19
+ * @date 2021/2/22
  * @since 1.0.0
  */
-public class NatServerResolverImpl implements NatServerResolver {
+public class SecurityZoneResolverImpl implements SecurityZoneResolver {
     /**
      * NETCONF基本操作的入口
      */
     private RpcManager rpcManager;
 
     /**
-     * <nat-server>层级的属性
+     * <security-zone>层级的属性
      */
     private String operationAttributes;
 
 
-    public NatServerResolverImpl(RpcManager rpcManager) {
+    public SecurityZoneResolverImpl(RpcManager rpcManager) {
         this(rpcManager, null);
     }
 
-    public NatServerResolverImpl(RpcManager rpcManager, Map<String, String> operationAttrMap) {
+    public SecurityZoneResolverImpl(RpcManager rpcManager, Map<String, String> operationAttrMap) {
         if(rpcManager == null){
             throw new IllegalArgumentException("Parameter 'rpcManager' cannot be empty.");
         }
@@ -58,20 +58,20 @@ public class NatServerResolverImpl implements NatServerResolver {
 
 
     @Override
-    public boolean createNatServerMapping(List<ServerMapping> serverMappingList) throws IOException {
-        if(serverMappingList == null || serverMappingList.isEmpty()){
-            throw new IllegalArgumentException("Parameter 'serverMappingList' cannot be empty.");
+    public boolean createSecurityZone(List<ZoneInstance> zoneInstanceList) throws IOException {
+        if(zoneInstanceList == null || zoneInstanceList.isEmpty()){
+            throw new IllegalArgumentException("Parameter 'zoneInstanceList' cannot be empty.");
         }
 
-        NatServer natServer = new NatServer(serverMappingList);
-        String xmlStr = XMLMAPPER_RESOURCES.get().writeValueAsString(natServer);
+        SecurityZone securityZone = new SecurityZone(zoneInstanceList);
+        String xmlStr = XMLMAPPER_RESOURCES.get().writeValueAsString(securityZone);
         //1. 添加 namespace
-        xmlStr = this.addNamespaceForNatServer(xmlStr);
+        xmlStr = this.addNamespaceForSecurityZone(xmlStr);
 
-        //2. 在 server-mapping 层级添加「create」标识
-        xmlStr = xmlStr.replaceAll("<server-mapping>", "<server-mapping" + this.addOperationNamespace(OperationEnums.CREATE) + ">");
+        //2. 在 zone-instance 层级添加「create」标识
+        xmlStr = xmlStr.replaceAll("<zone-instance>", "<zone-instance" + this.addOperationNamespace(OperationEnums.CREATE) + ">");
 
-        //3. 创建NAT Server
+        //3. 创建安全区域
         String rpcReply = this.rpcManager.editConfig(TargetEnums.RUNNING, null, null, ErrorOptionEnums.ROLLBACK_ON_ERROR, xmlStr);
 
         //4. 返回是否创建成功
@@ -79,20 +79,20 @@ public class NatServerResolverImpl implements NatServerResolver {
     }
 
     @Override
-    public boolean editNatServerMapping(List<ServerMapping> serverMappingList) throws IOException {
-        if(serverMappingList == null || serverMappingList.isEmpty()){
+    public boolean editSecurityZone(List<ZoneInstance> zoneInstanceList) throws IOException {
+        if(zoneInstanceList == null || zoneInstanceList.isEmpty()){
             throw new IllegalArgumentException("Parameter 'serverMappingList' cannot be empty.");
         }
 
-        NatServer natServer = new NatServer(serverMappingList);
-        String xmlStr = XMLMAPPER_RESOURCES.get().writeValueAsString(natServer);
+        SecurityZone securityZone = new SecurityZone(zoneInstanceList);
+        String xmlStr = XMLMAPPER_RESOURCES.get().writeValueAsString(securityZone);
         //1. 添加 namespace
-        xmlStr = this.addNamespaceForNatServer(xmlStr);
+        xmlStr = this.addNamespaceForSecurityZone(xmlStr);
 
-        //2. 在 server-mapping 层级添加「replace」标识
-        xmlStr = xmlStr.replaceAll("<server-mapping>", "<server-mapping" + this.addOperationNamespace(OperationEnums.REPLACE) + ">");
+        //2. 在 zone-instance 层级添加「replace」标识
+        xmlStr = xmlStr.replaceAll("<zone-instance>", "<zone-instance" + this.addOperationNamespace(OperationEnums.REPLACE) + ">");
 
-        //3. 修改NAT Server
+        //3. 修改安全区域
         String rpcReply = this.rpcManager.editConfig(TargetEnums.RUNNING, null, null, ErrorOptionEnums.ROLLBACK_ON_ERROR, xmlStr);
 
         //4. 返回是否修改成功
@@ -100,37 +100,37 @@ public class NatServerResolverImpl implements NatServerResolver {
     }
 
     @Override
-    public List<ServerMapping> getNatServerMapping(NatServer filter) throws IOException {
+    public List<ZoneInstance> getSecurityZone(SecurityZone filter) throws IOException {
         if(filter == null){
-            filter = new NatServer();
+            filter = new SecurityZone();
         }
 
         String xmlStr = XMLMAPPER_RESOURCES.get().writeValueAsString(filter);
         //1. 添加 namespace
-        xmlStr = this.addNamespaceForNatServer(xmlStr);
+        xmlStr = this.addNamespaceForSecurityZone(xmlStr);
 
-        //2. 查看NAT Server
+        //2. 查看安全区域
         String rpcReply = this.rpcManager.getConfig(TargetEnums.RUNNING, xmlStr);
 
-        //3. 返回NAT Server相关数据
+        //3. 返回安全区域相关数据
         return this.parseTheReturnResult(rpcReply);
     }
 
     @Override
-    public boolean deleteNatServerMapping(List<ServerMapping> serverMappingList) throws IOException {
-        if(serverMappingList == null || serverMappingList.isEmpty()){
-            throw new IllegalArgumentException("Parameter 'serverMappingList' cannot be empty.");
+    public boolean deleteSecurityZone(List<ZoneInstance> zoneInstanceList) throws IOException {
+        if(zoneInstanceList == null || zoneInstanceList.isEmpty()){
+            throw new IllegalArgumentException("Parameter 'zoneInstanceList' cannot be empty.");
         }
 
-        NatServer natServer = new NatServer(serverMappingList);
-        String xmlStr = XMLMAPPER_RESOURCES.get().writeValueAsString(natServer);
+        SecurityZone securityZone = new SecurityZone(zoneInstanceList);
+        String xmlStr = XMLMAPPER_RESOURCES.get().writeValueAsString(securityZone);
         //1. 添加 namespace
-        xmlStr = this.addNamespaceForNatServer(xmlStr);
+        xmlStr = this.addNamespaceForSecurityZone(xmlStr);
 
-        //2. 在 server-mapping 层级添加「delete」标识
-        xmlStr = xmlStr.replaceAll("<server-mapping>", "<server-mapping" + this.addOperationNamespace(OperationEnums.DELETE) + ">");
+        //2. 在 zone-instance 层级添加「delete」标识
+        xmlStr = xmlStr.replaceAll("<zone-instance>", "<zone-instance" + this.addOperationNamespace(OperationEnums.DELETE) + ">");
 
-        //3. 删除NAT Server
+        //3. 删除安全区域
         String rpcReply = this.rpcManager.editConfig(TargetEnums.RUNNING, null, null, ErrorOptionEnums.ROLLBACK_ON_ERROR, xmlStr);
 
         //4. 返回是否删除成功
@@ -141,44 +141,44 @@ public class NatServerResolverImpl implements NatServerResolver {
     /**
      * 解析返回结果
      * @author zifangsky
-     * @date 2021/2/20
+     * @date 2021/2/22
      * @since 1.0.0
      * @param rpcReply NETCONF Server的返回结果
-     * @return java.util.List<cn.zifangsky.netconf.adapter.huawei.natServer.model.ServerMapping>
+     * @return java.util.List<cn.zifangsky.netconf.adapter.huawei.securityZone.model.ZoneInstance>
      */
-    protected List<ServerMapping> parseTheReturnResult(String rpcReply) throws JsonProcessingException {
-        RpcReply<NatServerData> rpcReplyObj = XMLMAPPER_RESOURCES.get().readValue(rpcReply, new TypeReference<RpcReply<NatServerData>>() {
+    protected List<ZoneInstance> parseTheReturnResult(String rpcReply) throws JsonProcessingException {
+        RpcReply<SecurityZoneData> rpcReplyObj = XMLMAPPER_RESOURCES.get().readValue(rpcReply, new TypeReference<RpcReply<SecurityZoneData>>() {
         });
         if(rpcReplyObj == null){
             return null;
         }
 
-        NatServerData data = rpcReplyObj.getData();
+        SecurityZoneData data = rpcReplyObj.getData();
         if(data == null){
             return null;
         }
 
-        return data.getNatServer().getServerMapping();
+        return data.getSecurityZone().getZoneInstance();
     }
 
     /**
      * 如果必要生成默认的operationAttrMap
      * @author zifangsky
-     * @date 2021/2/19
+     * @date 2021/2/22
      * @since 1.0.0
      * @return java.util.Map<java.lang.String,java.lang.String>
      */
     protected Map<String, String> applyDefaultOperationAttrMapIfNecessary() {
         Map<String, String> defaultOperationAttrMap = new LinkedHashMap<>(4);
 
-        defaultOperationAttrMap.put("xmlns", HuaWeiConstants.URN_HUAWEI_NAT_SERVER);
+        defaultOperationAttrMap.put("xmlns", HuaWeiConstants.URN_HUAWEI_SECURITY_ZONE);
         defaultOperationAttrMap.put("xmlns:nc", NetconfConstants.URN_XML_NS_NETCONF_BASE_1_0);
         defaultOperationAttrMap.put("xmlns:yang", NetconfConstants.URN_IETF_XML_NS_YANG_1);
         return defaultOperationAttrMap;
     }
 
     /**
-     * 在 server-mapping 层级添加「create/replace/delete」标识
+     * 在 zone-instance 层级添加「create/replace/delete」标识
      * @param operation 动作
      * @return java.lang.String
      */
@@ -191,7 +191,7 @@ public class NatServerResolverImpl implements NatServerResolver {
     }
 
     /**
-     * 初始化<nat-server>层级的属性
+     * 初始化<security-zone>层级的属性
      */
     private void initOperationAttributes(Map<String, String> operationAttrMap) {
         StringBuilder attributes = new StringBuilder();
@@ -203,15 +203,15 @@ public class NatServerResolverImpl implements NatServerResolver {
     }
 
     /**
-     * 替 <nat-server> 添加 Namespace
+     * 替 <security-zone> 添加 Namespace
      * @author zifangsky
-     * @date 2021/2/19
+     * @date 2021/2/22
      * @since 1.0.0
-     * @param natServerTree &#60;nat-server&#62;转换成的xml字符串
+     * @param securityZoneTree &#60;security-zone&#62;转换成的xml字符串
      * @return java.lang.String
      */
-    private String addNamespaceForNatServer(String natServerTree){
-        return natServerTree.replace("<nat-server/>", "<nat-server></nat-server>")
-                .replace("<nat-server>", "<nat-server" + this.operationAttributes + ">");
+    private String addNamespaceForSecurityZone(String securityZoneTree){
+        return securityZoneTree.replace("<security-zone/>", "<security-zone></security-zone>")
+                .replace("<security-zone>", "<security-zone" + this.operationAttributes + ">");
     }
 }

@@ -61,7 +61,6 @@ class NatServerResolverTest {
         boolean result = natServerResolver.createNatServerMapping(serverMappingList);
         System.out.println("执行结果是：" + result);
         Assertions.assertTrue(result);
-
     }
 
     /**
@@ -81,7 +80,6 @@ class NatServerResolverTest {
         boolean result = natServerResolver.editNatServerMapping(serverMappingList);
         System.out.println("执行结果是：" + result);
         Assertions.assertTrue(result);
-
     }
 
     /**
@@ -110,6 +108,5 @@ class NatServerResolverTest {
         boolean result = natServerResolver.deleteNatServerMapping(serverMappingList);
         System.out.println("执行结果是：" + result);
         Assertions.assertTrue(result);
-
     }
 }
