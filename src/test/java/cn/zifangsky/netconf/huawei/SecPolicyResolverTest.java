@@ -69,6 +69,9 @@ class SecPolicyResolverTest {
         //如果希望端口设置为 any，则 new Service() 即可；如果希望不设置安全区域，则将对应字段设置为空即可
 //        Rule newRule = new Rule("test_by_code_sec_policy3", "通过程序自动下发配置", ActionEnums.TRUE, null, null,
 //                new Address("1.1.1.1/32", true), new Address("1.1.1.2/32", true), new Service());
+        //也可以将服务设置成预设的某些服务
+//        Rule newRule = new Rule("test_by_code_sec_policy4", "通过程序自动下发配置", ActionEnums.TRUE, null, null,
+//                new Address("1.1.1.1/32", true), new Address("1.1.1.2/32", true), new Service(Arrays.asList("smtp", "smtps")));
         Rule newRule = new Rule("test_by_code_sec_policy", "通过程序自动下发配置", ActionEnums.TRUE, "untrust", "trust",
                 new Address("1.1.1.1/32", true), new Address("1.1.1.2/32", true), new Service(item));
 
