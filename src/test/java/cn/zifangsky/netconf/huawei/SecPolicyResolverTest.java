@@ -8,8 +8,10 @@ import cn.zifangsky.netconf.adapter.huawei.secPolicy.model.SecPolicy;
 import cn.zifangsky.netconf.adapter.huawei.secPolicy.model.StaticPolicy;
 import cn.zifangsky.netconf.adapter.huawei.secPolicy.model.VirtualSystem;
 import cn.zifangsky.netconf.adapter.huawei.secPolicy.model.rules.*;
-import cn.zifangsky.netconf.core.DefaultRpcManager;
+import cn.zifangsky.netconf.core.DefaultDevice;
 import cn.zifangsky.netconf.core.Device;
+import cn.zifangsky.netconf.core.RpcManager;
+import cn.zifangsky.netconf.core.SingleDeviceRpcManager;
 import cn.zifangsky.netconf.core.exception.NetconfException;
 import org.junit.jupiter.api.*;
 
@@ -36,7 +38,7 @@ class SecPolicyResolverTest {
 
     @BeforeAll
     public static void init() throws NetconfException {
-        Device device = Device.builder()
+        Device device = DefaultDevice.builder()
                 .hostName(TEST_HOSTNAME)
                 .userName(TEST_USERNAME)
                 .password(TEST_PASSWORD)
@@ -44,7 +46,7 @@ class SecPolicyResolverTest {
                 .strictHostKeyChecking(false)
                 .build();
 
-        DefaultRpcManager rpcManager = new DefaultRpcManager(device);
+        RpcManager rpcManager = new SingleDeviceRpcManager(device);
         secPolicyResolver = new SecPolicyResolverImpl(rpcManager);
     }
 
@@ -69,7 +71,7 @@ class SecPolicyResolverTest {
         //一条新策略
         Rule newRule = new Rule("test_by_code_sec_policy", "通过程序自动下发配置", ActionEnums.TRUE, "untrust", "trust",
                 new Address(Arrays.asList("1.1.1.1", "10.1.1.0/24"), true), new Address(Collections.singletonList("1.1.1.2/32"), true), new Service(item));
-//        newRule.setParentGroup("策略组B");
+        newRule.setParentGroup("策略组B");
 
         StaticPolicy staticPolicy = new StaticPolicy(Collections.singletonList(newRule));
         VirtualSystem vsy = new VirtualSystem(DefaultVsysEnums.PUBLIC.getCode(), staticPolicy);

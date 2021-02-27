@@ -7,7 +7,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static cn.zifangsky.netconf.core.DefaultRpcManager.XMLMAPPER_RESOURCES;
+import static cn.zifangsky.netconf.core.AbstractExecutingRpcManager.XMLMAPPER_RESOURCES;
 
 /**
  * 测试XML字符串转Java对象的各种情况

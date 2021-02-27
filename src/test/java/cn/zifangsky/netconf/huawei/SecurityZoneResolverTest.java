@@ -5,8 +5,10 @@ import cn.zifangsky.netconf.adapter.huawei.securityZone.SecurityZoneResolver;
 import cn.zifangsky.netconf.adapter.huawei.securityZone.SecurityZoneResolverImpl;
 import cn.zifangsky.netconf.adapter.huawei.securityZone.model.SecurityZone;
 import cn.zifangsky.netconf.adapter.huawei.securityZone.model.ZoneInstance;
-import cn.zifangsky.netconf.core.DefaultRpcManager;
+import cn.zifangsky.netconf.core.DefaultDevice;
 import cn.zifangsky.netconf.core.Device;
+import cn.zifangsky.netconf.core.RpcManager;
+import cn.zifangsky.netconf.core.SingleDeviceRpcManager;
 import cn.zifangsky.netconf.core.exception.NetconfException;
 import org.junit.jupiter.api.*;
 
@@ -33,7 +35,7 @@ class SecurityZoneResolverTest {
 
     @BeforeAll
     public static void init() throws NetconfException {
-        Device device = Device.builder()
+        Device device = DefaultDevice.builder()
                 .hostName(TEST_HOSTNAME)
                 .userName(TEST_USERNAME)
                 .password(TEST_PASSWORD)
@@ -41,7 +43,7 @@ class SecurityZoneResolverTest {
                 .strictHostKeyChecking(false)
                 .build();
 
-        DefaultRpcManager rpcManager = new DefaultRpcManager(device);
+        RpcManager rpcManager = new SingleDeviceRpcManager(device);
         securityZoneResolver = new SecurityZoneResolverImpl(rpcManager);
     }
 

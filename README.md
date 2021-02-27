@@ -44,8 +44,9 @@ The basic RPC operations related to NETCONF protocol, you can refer to the `cn.z
  * @date 2021/2/8
  * @since 1.0.0
  * @return return true if connected
+ * @throws IOException If there are errors communicating with the netconf server.
  */
-boolean isConnected();
+boolean isConnected() throws IOException;
 
 /**
  * 从Netconf session获取 sessionId
@@ -54,8 +55,9 @@ boolean isConnected();
  * @date 2021/2/8
  * @since 1.0.0
  * @return Session ID
+ * @throws IOException If there are errors communicating with the netconf server.
  */
-String getSessionId();
+String getSessionId() throws IOException;
 
 /**
  * 发起一个RPC请求
@@ -557,7 +559,7 @@ private static DefaultRpcManager rpcManager;
 
 @BeforeAll
 public static void init() throws NetconfException {
-    Device device = Device.builder()
+    Device device = DefaultDevice.builder()
             .hostName(TEST_HOSTNAME)
             .userName(TEST_USERNAME)
             .password(TEST_PASSWORD)
@@ -565,7 +567,7 @@ public static void init() throws NetconfException {
             .strictHostKeyChecking(false)
             .build();
 
-    rpcManager = new DefaultRpcManager(device);
+    rpcManager = new SingleDeviceRpcManager(device);
 }
 
 /**
@@ -573,7 +575,7 @@ public static void init() throws NetconfException {
  */
 @Test
 @DisplayName("测试连接情况")
-public void GIVEN_requiredParameters_THEN_createDevice() throws NetconfException {
+public void GIVEN_requiredParameters_THEN_createDevice() throws IOException {
     System.out.println(rpcManager.getSessionId() + ": " + rpcManager.isConnected());
 }
 

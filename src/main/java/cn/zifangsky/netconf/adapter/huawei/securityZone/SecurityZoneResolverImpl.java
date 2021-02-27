@@ -18,7 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static cn.zifangsky.netconf.core.DefaultRpcManager.XMLMAPPER_RESOURCES;
+import static cn.zifangsky.netconf.core.AbstractExecutingRpcManager.XMLMAPPER_RESOURCES;
 
 /**
  * 安全区域相关方法

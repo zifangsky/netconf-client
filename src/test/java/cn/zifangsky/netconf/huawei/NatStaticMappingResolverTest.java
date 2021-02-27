@@ -2,12 +2,13 @@ package cn.zifangsky.netconf.huawei;
 
 import cn.zifangsky.netconf.adapter.huawei.DefaultVsysEnums;
 import cn.zifangsky.netconf.adapter.huawei.natStaticMapping.NatStaticMappingResolver;
-import cn.zifangsky.netconf.adapter.huawei.natStaticMapping.model.*;
-import cn.zifangsky.netconf.core.DefaultRpcManager;
-import cn.zifangsky.netconf.core.Device;
-import cn.zifangsky.netconf.core.exception.NetconfException;
 import cn.zifangsky.netconf.adapter.huawei.natStaticMapping.NatStaticMappingResolverImpl;
 import cn.zifangsky.netconf.adapter.huawei.natStaticMapping.model.*;
+import cn.zifangsky.netconf.core.DefaultDevice;
+import cn.zifangsky.netconf.core.Device;
+import cn.zifangsky.netconf.core.RpcManager;
+import cn.zifangsky.netconf.core.SingleDeviceRpcManager;
+import cn.zifangsky.netconf.core.exception.NetconfException;
 import org.junit.jupiter.api.*;
 
 import java.io.IOException;
@@ -33,7 +34,7 @@ class NatStaticMappingResolverTest {
 
     @BeforeAll
     public static void init() throws NetconfException {
-        Device device = Device.builder()
+        Device device = DefaultDevice.builder()
                 .hostName(TEST_HOSTNAME)
                 .userName(TEST_USERNAME)
                 .password(TEST_PASSWORD)
@@ -41,7 +42,7 @@ class NatStaticMappingResolverTest {
                 .strictHostKeyChecking(false)
                 .build();
 
-        DefaultRpcManager rpcManager = new DefaultRpcManager(device);
+        RpcManager rpcManager = new SingleDeviceRpcManager(device);
         natStaticMappingResolver = new NatStaticMappingResolverImpl(rpcManager);
     }
 

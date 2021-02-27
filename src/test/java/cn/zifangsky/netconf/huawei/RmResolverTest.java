@@ -4,8 +4,10 @@ import cn.zifangsky.netconf.adapter.huawei.rm.RmResolver;
 import cn.zifangsky.netconf.adapter.huawei.rm.RmResolverImpl;
 import cn.zifangsky.netconf.adapter.huawei.rm.model.Rm;
 import cn.zifangsky.netconf.adapter.huawei.rm.model.Route;
-import cn.zifangsky.netconf.core.DefaultRpcManager;
+import cn.zifangsky.netconf.core.DefaultDevice;
 import cn.zifangsky.netconf.core.Device;
+import cn.zifangsky.netconf.core.RpcManager;
+import cn.zifangsky.netconf.core.SingleDeviceRpcManager;
 import cn.zifangsky.netconf.core.exception.NetconfException;
 import org.junit.jupiter.api.*;
 
@@ -31,7 +33,7 @@ class RmResolverTest {
 
     @BeforeAll
     public static void init() throws NetconfException {
-        Device device = Device.builder()
+        Device device = DefaultDevice.builder()
                 .hostName(TEST_HOSTNAME)
                 .userName(TEST_USERNAME)
                 .password(TEST_PASSWORD)
@@ -39,7 +41,7 @@ class RmResolverTest {
                 .strictHostKeyChecking(false)
                 .build();
 
-        DefaultRpcManager rpcManager = new DefaultRpcManager(device);
+        RpcManager rpcManager = new SingleDeviceRpcManager(device);
         rmResolver = new RmResolverImpl(rpcManager);
     }
 

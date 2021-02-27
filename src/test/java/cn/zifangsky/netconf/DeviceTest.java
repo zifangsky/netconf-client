@@ -4,13 +4,13 @@ import cn.zifangsky.netconf.adapter.huawei.HuaWeiConstants;
 import cn.zifangsky.netconf.adapter.huawei.secPolicy.model.SecPolicy;
 import cn.zifangsky.netconf.adapter.huawei.secPolicy.model.StaticPolicyGroup;
 import cn.zifangsky.netconf.adapter.huawei.secPolicy.model.VirtualSystem;
-import cn.zifangsky.netconf.core.DefaultRpcManager;
-import cn.zifangsky.netconf.core.Device;
+import cn.zifangsky.netconf.core.*;
 import cn.zifangsky.netconf.core.exception.NetconfException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,11 +22,11 @@ public class DeviceTest {
     private static final String TEST_PASSWORD = "admin123456";
     private static final int DEFAULT_NETCONF_PORT = 830;
 
-    private static DefaultRpcManager rpcManager;
+    private static RpcManager rpcManager;
 
     @BeforeAll
     public static void init() throws NetconfException {
-        Device device = Device.builder()
+        Device device = DefaultDevice.builder()
                 .hostName(TEST_HOSTNAME)
                 .userName(TEST_USERNAME)
                 .password(TEST_PASSWORD)
@@ -34,7 +34,7 @@ public class DeviceTest {
                 .strictHostKeyChecking(false)
                 .build();
 
-        rpcManager = new DefaultRpcManager(device);
+        rpcManager = new SingleDeviceRpcManager(device);
     }
 
     /**
@@ -42,7 +42,7 @@ public class DeviceTest {
      */
     @Test
     @DisplayName("测试连接情况")
-    public void GIVEN_requiredParameters_THEN_createDevice() throws NetconfException {
+    public void GIVEN_requiredParameters_THEN_createDevice() throws IOException {
         System.out.println(rpcManager.getSessionId() + ": " + rpcManager.isConnected());
     }
 
@@ -107,7 +107,7 @@ public class DeviceTest {
 //        xmlMapper.enable(SerializationFeature.INDENT_OUTPUT);
 //        xmlMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
-        String xmlStr = DefaultRpcManager.XMLMAPPER_RESOURCES.get().writeValueAsString(secPolicy)
+        String xmlStr = AbstractExecutingRpcManager.XMLMAPPER_RESOURCES.get().writeValueAsString(secPolicy)
                 .replace("<sec-policy>", "<sec-policy xmlns=\"" + HuaWeiConstants.URN_HUAWEI_SECURITY_POLICY + "\">");
 //        System.out.println(xmlStr);
 

@@ -4,18 +4,20 @@ import cn.zifangsky.netconf.core.enums.DefaultOperationEnums;
 import cn.zifangsky.netconf.core.enums.ErrorOptionEnums;
 import cn.zifangsky.netconf.core.enums.TargetEnums;
 import cn.zifangsky.netconf.core.enums.TestOptionEnums;
-import cn.zifangsky.netconf.core.exception.NetconfException;
 import cn.zifangsky.netconf.core.model.HelloRpc;
 import cn.zifangsky.netconf.core.model.RpcReply;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.Map;
 
 import static cn.zifangsky.netconf.core.NetconfSession.COMMON_RPC_REPLY_FLAG;
 import static cn.zifangsky.netconf.core.NetconfSession.HELLO_RPC_REPLY_FLAG;
@@ -28,12 +30,14 @@ import static cn.zifangsky.netconf.core.NetconfSession.HELLO_RPC_REPLY_FLAG;
  * @date 21/2/7
  * @since 1.0.0
  */
-public class DefaultRpcManager implements RpcManager {
+@Slf4j
+public abstract class AbstractExecutingRpcManager extends AbstractRoutingRpcManager {
     public static final ThreadLocal<XmlMapper> XMLMAPPER_RESOURCES = ThreadLocal.withInitial(() -> {
         XmlMapper xmlMapper = new XmlMapper();
         xmlMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         return xmlMapper;
     });
+
     /**
      * 通过 NETCONF 执行命令
      */
@@ -165,42 +169,32 @@ public class DefaultRpcManager implements RpcManager {
                                                             "<session-id>{0}</session-id>" +
                                                         "</kill-session>";
 
-    /*  params  */
-    /**
-     * 一个与设备的连接实例
-     */
-    private Device device;
+    public AbstractExecutingRpcManager(Device defaultDevice) {
+        this(new HashMap<>(), defaultDevice);
+    }
 
-    public DefaultRpcManager(Device device) throws NetconfException {
-        if(device == null){
-            throw new IllegalArgumentException("Parameter 'device' cannot be empty.");
-        }
-
-        if(!device.isConnected()){
-            device.connect();
-        }
-
-        this.device = device;
+    public AbstractExecutingRpcManager(Map<Object, Device> targetDevices, Device defaultDevice) {
+        super(targetDevices, defaultDevice);
     }
 
     @Override
-    public boolean isConnected() {
-        return this.device.isConnected();
+    public boolean isConnected() throws IOException {
+        return this.determineTargetDevice().isConnected();
     }
 
     @Override
-    public String getSessionId() {
-        return this.device.getSessionId();
+    public String getSessionId() throws IOException {
+        return this.determineTargetDevice().getSessionId();
     }
 
     @Override
     public String executeRpc(String rpcContent) throws IOException {
-        return this.device.executeRpc(rpcContent);
+        return this.determineTargetDevice().executeRpc(rpcContent);
     }
 
     @Override
     public BufferedReader executeRpcRunning(String rpcContent) throws IOException {
-        return this.device.executeRpcRunning(rpcContent);
+        return this.determineTargetDevice().executeRpcRunning(rpcContent);
     }
 
     @Override

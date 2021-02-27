@@ -4,8 +4,7 @@ import cn.zifangsky.netconf.adapter.huawei.DefaultVsysEnums;
 import cn.zifangsky.netconf.adapter.huawei.natServer.NatServerResolver;
 import cn.zifangsky.netconf.adapter.huawei.natServer.NatServerResolverImpl;
 import cn.zifangsky.netconf.adapter.huawei.natServer.model.*;
-import cn.zifangsky.netconf.core.DefaultRpcManager;
-import cn.zifangsky.netconf.core.Device;
+import cn.zifangsky.netconf.core.*;
 import cn.zifangsky.netconf.core.enums.ProtocolEnums;
 import cn.zifangsky.netconf.core.exception.NetconfException;
 import org.junit.jupiter.api.*;
@@ -33,7 +32,7 @@ class NatServerResolverTest {
 
     @BeforeAll
     public static void init() throws NetconfException {
-        Device device = Device.builder()
+        Device device = DefaultDevice.builder()
                 .hostName(TEST_HOSTNAME)
                 .userName(TEST_USERNAME)
                 .password(TEST_PASSWORD)
@@ -41,7 +40,7 @@ class NatServerResolverTest {
                 .strictHostKeyChecking(false)
                 .build();
 
-        DefaultRpcManager rpcManager = new DefaultRpcManager(device);
+        RpcManager rpcManager = new SingleDeviceRpcManager(device);
         natServerResolver = new NatServerResolverImpl(rpcManager);
     }
 
