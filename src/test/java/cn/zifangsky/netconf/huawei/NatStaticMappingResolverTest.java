@@ -13,7 +13,6 @@ import org.junit.jupiter.api.*;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 /**
  * 测试--「华为防火墙-静态映射」
@@ -56,7 +55,6 @@ class NatStaticMappingResolverTest {
         //私网地址池
         InsidePool insidePool1 = new InsidePool(2, DefaultVsysEnums.PUBLIC.getCode(), new Section(1, "2.1.2.1", "2.1.2.5"));
         InsidePool insidePool2 = new InsidePool(3, DefaultVsysEnums.PUBLIC.getCode(), new Section(2, "2.1.3.1", "2.1.3.5"));
-        List<InsidePool> insidePoolList = Arrays.asList(insidePool1, insidePool2);
 
         //公网地址池
         GlobalPool globalPool = new GlobalPool(3, DefaultVsysEnums.PUBLIC.getCode(), new Section(1, "5.9.8.1", "5.9.8.6"));
