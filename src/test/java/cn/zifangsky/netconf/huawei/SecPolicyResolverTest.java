@@ -14,6 +14,7 @@ import cn.zifangsky.netconf.core.exception.NetconfException;
 import org.junit.jupiter.api.*;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 
 /**
@@ -67,7 +68,8 @@ class SecPolicyResolverTest {
 
         //一条新策略
         Rule newRule = new Rule("test_by_code_sec_policy", "通过程序自动下发配置", ActionEnums.TRUE, "untrust", "trust",
-                new Address("1.1.1.1/32", true), new Address("1.1.1.2/32", true), new Service(item));
+                new Address(Arrays.asList("1.1.1.1", "10.1.1.0/24"), true), new Address(Collections.singletonList("1.1.1.2/32"), true), new Service(item));
+//        newRule.setParentGroup("策略组B");
 
         StaticPolicy staticPolicy = new StaticPolicy(Collections.singletonList(newRule));
         VirtualSystem vsy = new VirtualSystem(DefaultVsysEnums.PUBLIC.getCode(), staticPolicy);
@@ -77,9 +79,6 @@ class SecPolicyResolverTest {
         System.out.println("执行结果是：" + result);
         Assertions.assertTrue(result);
     }
-
-
-
 
     /**
      * 修改安全策略
@@ -92,7 +91,7 @@ class SecPolicyResolverTest {
         ServiceItems item = new ServiceItems(new Tcp("100 200 to 300 600", "700 888 to 999 1023 to 1030"));
         //保持名称不变
         Rule rule = new Rule("test_by_code_sec_policy", "通过程序自动修改配置", ActionEnums.FALSE, "untrust", "trust",
-                new Address("1.1.1.1/32", true), new Address("1.1.1.2/32", true), new Service(item));
+                new Address(Arrays.asList("1.1.1.1/32", "10.1.1.0/24"), true), new Address(Collections.singletonList("1.1.1.2/32"), true), new Service(item));
 
         StaticPolicy staticPolicy = new StaticPolicy(Collections.singletonList(rule));
         VirtualSystem vsy = new VirtualSystem(DefaultVsysEnums.PUBLIC.getCode(), staticPolicy);
