@@ -37,4 +37,17 @@ public class NatStaticMapping {
     @JacksonXmlProperty(localName = "static-mapping")
     @JacksonXmlElementWrapper(useWrapping = false)
     private List<StaticMapping> staticMapping;
+
+    public NatStaticMapping() {
+    }
+
+    public NatStaticMapping(List<StaticMapping> staticMapping) {
+        this.staticMapping = staticMapping;
+    }
+
+    public NatStaticMapping(List<InsidePool> insidePool, List<GlobalPool> globalPool, List<StaticMapping> staticMapping) {
+        this.insidePool = insidePool;
+        this.globalPool = globalPool;
+        this.staticMapping = staticMapping;
+    }
 }

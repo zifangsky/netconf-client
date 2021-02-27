@@ -23,4 +23,11 @@ public class SecPolicy {
     @JacksonXmlProperty(localName = "vsys")
     @JacksonXmlElementWrapper(useWrapping = false)
     private List<VirtualSystem> vsys;
+
+    public SecPolicy() {
+    }
+
+    public SecPolicy(List<VirtualSystem> vsys) {
+        this.vsys = vsys;
+    }
 }

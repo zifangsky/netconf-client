@@ -11,7 +11,7 @@ import cn.zifangsky.netconf.core.exception.NetconfException;
 import org.junit.jupiter.api.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -52,13 +52,10 @@ class SecurityZoneResolverTest {
     @Order(1)
     @DisplayName("创建安全区域")
     void createSecurityZone() throws IOException {
-        List<ZoneInstance> zoneInstanceList = new ArrayList<>();
-
         ZoneInstance zoneInstance = new ZoneInstance("test_by_code_zone", DefaultVsysEnums.PUBLIC.getCode(),
                 "通过程序自动创建的安全区域", 66, "WAN0/0/1");
-        zoneInstanceList.add(zoneInstance);
 
-        boolean result = securityZoneResolver.createSecurityZone(zoneInstanceList);
+        boolean result = securityZoneResolver.createSecurityZone(Collections.singletonList(zoneInstance));
         System.out.println("执行结果是：" + result);
         Assertions.assertTrue(result);
 
@@ -71,14 +68,11 @@ class SecurityZoneResolverTest {
     @Order(2)
     @DisplayName("修改安全区域")
     void editSecurityZone() throws IOException {
-        List<ZoneInstance> zoneInstanceList = new ArrayList<>();
-
         //修改名称为「test_by_code_zone」的安全区域
         ZoneInstance zoneInstance = new ZoneInstance("test_by_code_zone", DefaultVsysEnums.PUBLIC.getCode(),
                 "通过程序自动创建的安全区域（已修改）", 67, "WAN0/0/1");
-        zoneInstanceList.add(zoneInstance);
 
-        boolean result = securityZoneResolver.editSecurityZone(zoneInstanceList);
+        boolean result = securityZoneResolver.editSecurityZone(Collections.singletonList(zoneInstance));
         System.out.println("执行结果是：" + result);
         Assertions.assertTrue(result);
     }
@@ -102,13 +96,10 @@ class SecurityZoneResolverTest {
     @Order(4)
     @DisplayName("删除安全区域")
     void deleteSecurityZone() throws IOException {
-        List<ZoneInstance> zoneInstanceList = new ArrayList<>();
-
         //删除名称为「test_by_code_zone」的安全区域
         ZoneInstance zoneInstance = new ZoneInstance("test_by_code_zone", DefaultVsysEnums.PUBLIC.getCode());
-        zoneInstanceList.add(zoneInstance);
 
-        boolean result = securityZoneResolver.deleteSecurityZone(zoneInstanceList);
+        boolean result = securityZoneResolver.deleteSecurityZone(Collections.singletonList(zoneInstance));
         System.out.println("执行结果是：" + result);
         Assertions.assertTrue(result);
     }

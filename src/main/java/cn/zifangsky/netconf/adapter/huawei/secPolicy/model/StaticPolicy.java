@@ -22,4 +22,11 @@ public class StaticPolicy {
     @JacksonXmlProperty(localName = "rule")
     @JacksonXmlElementWrapper(useWrapping = false)
     private List<Rule> rule;
+
+    public StaticPolicy() {
+    }
+
+    public StaticPolicy(List<Rule> rule) {
+        this.rule = rule;
+    }
 }

@@ -53,22 +53,22 @@ class NatStaticMappingResolverTest {
     @Order(1)
     @DisplayName("创建静态映射")
     void createNatStaticMapping() throws IOException {
-        NatStaticMapping natStaticMapping = new NatStaticMapping();
-
         //私网地址池
         InsidePool insidePool1 = new InsidePool(2, DefaultVsysEnums.PUBLIC.getCode(), new Section(1, "2.1.2.1", "2.1.2.5"));
         InsidePool insidePool2 = new InsidePool(3, DefaultVsysEnums.PUBLIC.getCode(), new Section(2, "2.1.3.1", "2.1.3.5"));
         List<InsidePool> insidePoolList = Arrays.asList(insidePool1, insidePool2);
-        natStaticMapping.setInsidePool(insidePoolList);
 
         //公网地址池
         GlobalPool globalPool = new GlobalPool(3, DefaultVsysEnums.PUBLIC.getCode(), new Section(1, "5.9.8.1", "5.9.8.6"));
-        natStaticMapping.setGlobalPool(Collections.singletonList(globalPool));
 
         //给接口「GigabitEthernet0/0/5」绑定静态映射
         StaticMapping staticMapping = new StaticMapping(1, DefaultVsysEnums.PUBLIC.getCode(),
                 new MappingCfg(2, null, "GigabitEthernet0/0/5", 2050, 65532, 4095), new ExcludePort(5052, 5060));
-        natStaticMapping.setStaticMapping(Collections.singletonList(staticMapping));
+
+        NatStaticMapping natStaticMapping = new NatStaticMapping(
+                Arrays.asList(insidePool1, insidePool2),
+                Collections.singletonList(globalPool),
+                Collections.singletonList(staticMapping));
 
         boolean result = natStaticMappingResolver.createNatStaticMapping(natStaticMapping);
         System.out.println("执行结果是：" + result);
@@ -82,12 +82,11 @@ class NatStaticMappingResolverTest {
     @Order(2)
     @DisplayName("修改静态映射")
     void editNatStaticMapping() throws IOException {
-        NatStaticMapping natStaticMapping = new NatStaticMapping();
-
         //修改静态映射ID为1的静态映射
         StaticMapping staticMapping = new StaticMapping(1, DefaultVsysEnums.PUBLIC.getCode(),
                 new MappingCfg(3, null, "GigabitEthernet0/0/5", 30000, 40000, 4095), new ExcludePort(8000, 8100));
-        natStaticMapping.setStaticMapping(Collections.singletonList(staticMapping));
+
+        NatStaticMapping natStaticMapping = new NatStaticMapping(Collections.singletonList(staticMapping));
 
         boolean result = natStaticMappingResolver.editNatStaticMapping(natStaticMapping);
         System.out.println("执行结果是：" + result);
@@ -115,11 +114,10 @@ class NatStaticMappingResolverTest {
     @Order(4)
     @DisplayName("删除静态映射")
     void deleteNatStaticMapping() throws IOException {
-        NatStaticMapping natStaticMapping = new NatStaticMapping();
-
         //删除ID为1的静态映射
         StaticMapping staticMapping = new StaticMapping(1, DefaultVsysEnums.PUBLIC.getCode());
-        natStaticMapping.setStaticMapping(Collections.singletonList(staticMapping));
+
+        NatStaticMapping natStaticMapping = new NatStaticMapping(Collections.singletonList(staticMapping));
 
         boolean result = natStaticMappingResolver.deleteNatStaticMapping(natStaticMapping);
         System.out.println("执行结果是：" + result);

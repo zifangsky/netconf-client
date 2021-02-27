@@ -14,9 +14,7 @@ import cn.zifangsky.netconf.core.exception.NetconfException;
 import org.junit.jupiter.api.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 /**
  * 测试--「华为防火墙-安全策略」
@@ -57,28 +55,21 @@ class SecPolicyResolverTest {
     @Order(1)
     @DisplayName("创建安全策略")
     void createSecPolicy() throws IOException {
-        SecPolicy secPolicy = new SecPolicy();
-        List<VirtualSystem> vsys = new ArrayList<>();
-        VirtualSystem vsy = new VirtualSystem();
-        vsy.setName(DefaultVsysEnums.PUBLIC.getCode());
-
-        StaticPolicy staticPolicy = new StaticPolicy();
-        //一条新策略
-        ServiceItems item = new ServiceItems();
-        item.setTcp(new Tcp("100 200 to 300 600", "700 888 to 999 1023"));
+        ServiceItems item = new ServiceItems(new Tcp("100 200 to 300 600", "700 888 to 999 1023"));
         //如果希望端口设置为 any，则 new Service() 即可；如果希望不设置安全区域，则将对应字段设置为空即可
 //        Rule newRule = new Rule("test_by_code_sec_policy3", "通过程序自动下发配置", ActionEnums.TRUE, null, null,
 //                new Address("1.1.1.1/32", true), new Address("1.1.1.2/32", true), new Service());
         //也可以将服务设置成预设的某些服务
 //        Rule newRule = new Rule("test_by_code_sec_policy4", "通过程序自动下发配置", ActionEnums.TRUE, null, null,
 //                new Address("1.1.1.1/32", true), new Address("1.1.1.2/32", true), new Service(Arrays.asList("smtp", "smtps")));
+
+        //一条新策略
         Rule newRule = new Rule("test_by_code_sec_policy", "通过程序自动下发配置", ActionEnums.TRUE, "untrust", "trust",
                 new Address("1.1.1.1/32", true), new Address("1.1.1.2/32", true), new Service(item));
 
-        staticPolicy.setRule(Collections.singletonList(newRule));
-        vsy.setStaticPolicy(staticPolicy);
-        vsys.add(vsy);
-        secPolicy.setVsys(vsys);
+        StaticPolicy staticPolicy = new StaticPolicy(Collections.singletonList(newRule));
+        VirtualSystem vsy = new VirtualSystem(DefaultVsysEnums.PUBLIC.getCode(), staticPolicy);
+        SecPolicy secPolicy = new SecPolicy(Collections.singletonList(vsy));
 
         boolean result = secPolicyResolver.createSecPolicy(secPolicy);
         System.out.println("执行结果是：" + result);
@@ -92,23 +83,15 @@ class SecPolicyResolverTest {
     @Order(2)
     @DisplayName("修改安全策略")
     void editSecPolicy() throws IOException {
-        SecPolicy secPolicy = new SecPolicy();
-        List<VirtualSystem> vsys = new ArrayList<>();
-        VirtualSystem vsy = new VirtualSystem();
-        vsy.setName(DefaultVsysEnums.PUBLIC.getCode());
-
-        StaticPolicy staticPolicy = new StaticPolicy();
         //已有的一条策略
-        ServiceItems item = new ServiceItems();
-        item.setTcp(new Tcp("100 200 to 300 600", "700 888 to 999 1023 to 1030"));
+        ServiceItems item = new ServiceItems(new Tcp("100 200 to 300 600", "700 888 to 999 1023 to 1030"));
         //保持名称不变
-        Rule newRule = new Rule("test_by_code_sec_policy", "通过程序自动修改配置", ActionEnums.FALSE, "untrust", "trust",
+        Rule rule = new Rule("test_by_code_sec_policy", "通过程序自动修改配置", ActionEnums.FALSE, "untrust", "trust",
                 new Address("1.1.1.1/32", true), new Address("1.1.1.2/32", true), new Service(item));
 
-        staticPolicy.setRule(Collections.singletonList(newRule));
-        vsy.setStaticPolicy(staticPolicy);
-        vsys.add(vsy);
-        secPolicy.setVsys(vsys);
+        StaticPolicy staticPolicy = new StaticPolicy(Collections.singletonList(rule));
+        VirtualSystem vsy = new VirtualSystem(DefaultVsysEnums.PUBLIC.getCode(), staticPolicy);
+        SecPolicy secPolicy = new SecPolicy(Collections.singletonList(vsy));
 
         boolean result = secPolicyResolver.editSecPolicy(secPolicy);
         System.out.println("执行结果是：" + result);
@@ -122,15 +105,9 @@ class SecPolicyResolverTest {
     @Order(3)
     @DisplayName("查看安全策略")
     void getSecPolicy() throws IOException {
-        SecPolicy secPolicy = new SecPolicy();
-        List<VirtualSystem> vsys = new ArrayList<>();
-        VirtualSystem vsy = new VirtualSystem();
-        vsy.setName(DefaultVsysEnums.PUBLIC.getCode());
-
         //只查询「静态安全策略」
-        vsy.setStaticPolicy(new StaticPolicy());
-        vsys.add(vsy);
-        secPolicy.setVsys(vsys);
+        VirtualSystem vsy = new VirtualSystem(DefaultVsysEnums.PUBLIC.getCode(), new StaticPolicy());
+        SecPolicy secPolicy = new SecPolicy(Collections.singletonList(vsy));
 
         SecPolicy result = secPolicyResolver.getSecPolicy(secPolicy);
         System.out.println("执行结果是：" + result);
@@ -144,19 +121,12 @@ class SecPolicyResolverTest {
     @Order(4)
     @DisplayName("删除安全策略")
     void deleteSecPolicy() throws IOException {
-        SecPolicy secPolicy = new SecPolicy();
-        List<VirtualSystem> vsys = new ArrayList<>();
-        VirtualSystem vsy = new VirtualSystem();
-        vsy.setName(DefaultVsysEnums.PUBLIC.getCode());
-
-        StaticPolicy staticPolicy = new StaticPolicy();
         //提供需要删除策略的名称
-        Rule newRule = new Rule("test_by_code_sec_policy");
+        Rule deleteRule = new Rule("test_by_code_sec_policy7");
 
-        staticPolicy.setRule(Collections.singletonList(newRule));
-        vsy.setStaticPolicy(staticPolicy);
-        vsys.add(vsy);
-        secPolicy.setVsys(vsys);
+        StaticPolicy staticPolicy = new StaticPolicy(Collections.singletonList(deleteRule));
+        VirtualSystem vsy = new VirtualSystem(DefaultVsysEnums.PUBLIC.getCode(), staticPolicy);
+        SecPolicy secPolicy = new SecPolicy(Collections.singletonList(vsy));
 
         boolean result = secPolicyResolver.deleteSecPolicy(secPolicy);
         System.out.println("执行结果是：" + result);
@@ -170,15 +140,10 @@ class SecPolicyResolverTest {
     @Order(5)
     @DisplayName("查看安全策略的命中次数")
     void getSecPolicyHitTimes() throws IOException {
-        SecPolicy secPolicy = new SecPolicy();
-        List<VirtualSystem> vsys = new ArrayList<>();
-        VirtualSystem vsy = new VirtualSystem();
-        vsy.setName(DefaultVsysEnums.PUBLIC.getCode());
-
         //只查询「静态安全策略」的命中次数
-//        vsy.setStaticPolicy(new StaticPolicy());
-        vsys.add(vsy);
-        secPolicy.setVsys(vsys);
+//        VirtualSystem vsy = new VirtualSystem(DefaultVsysEnums.PUBLIC.getCode(), new StaticPolicy());
+        VirtualSystem vsy = new VirtualSystem(DefaultVsysEnums.PUBLIC.getCode());
+        SecPolicy secPolicy = new SecPolicy(Collections.singletonList(vsy));
 
         SecPolicy result = secPolicyResolver.getSecPolicyHitTimes(secPolicy);
         System.out.println("执行结果是：" + result);

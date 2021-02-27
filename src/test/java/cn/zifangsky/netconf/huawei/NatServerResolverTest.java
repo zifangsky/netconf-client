@@ -1,17 +1,17 @@
 package cn.zifangsky.netconf.huawei;
 
 import cn.zifangsky.netconf.adapter.huawei.DefaultVsysEnums;
-import cn.zifangsky.netconf.core.enums.ProtocolEnums;
 import cn.zifangsky.netconf.adapter.huawei.natServer.NatServerResolver;
 import cn.zifangsky.netconf.adapter.huawei.natServer.NatServerResolverImpl;
 import cn.zifangsky.netconf.adapter.huawei.natServer.model.*;
 import cn.zifangsky.netconf.core.DefaultRpcManager;
 import cn.zifangsky.netconf.core.Device;
+import cn.zifangsky.netconf.core.enums.ProtocolEnums;
 import cn.zifangsky.netconf.core.exception.NetconfException;
 import org.junit.jupiter.api.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -52,13 +52,10 @@ class NatServerResolverTest {
     @Order(1)
     @DisplayName("创建NAT Server")
     void createNatServerMapping() throws IOException {
-        List<ServerMapping> serverMappingList = new ArrayList<>();
-
         ServerMapping newMapping = new ServerMapping("test_by_code_nat", DefaultVsysEnums.PUBLIC.getCode(), ProtocolEnums.TCP,
                 new Global("172.24.31.180", null), new Port(8080), new Inside("192.168.2.100", null), new Port(18080));
-        serverMappingList.add(newMapping);
 
-        boolean result = natServerResolver.createNatServerMapping(serverMappingList);
+        boolean result = natServerResolver.createNatServerMapping(Collections.singletonList(newMapping));
         System.out.println("执行结果是：" + result);
         Assertions.assertTrue(result);
     }
@@ -70,14 +67,11 @@ class NatServerResolverTest {
     @Order(2)
     @DisplayName("修改NAT Server")
     void editNatServerMapping() throws IOException {
-        List<ServerMapping> serverMappingList = new ArrayList<>();
-
         //修改名称为「test_by_code」的服务器映射
         ServerMapping mapping = new ServerMapping("test_by_code_nat", DefaultVsysEnums.PUBLIC.getCode(), ProtocolEnums.TCP,
                 new Global("172.24.31.180", null), new Port(8080), new Inside("192.168.2.100", null), new Port(18081));
-        serverMappingList.add(mapping);
 
-        boolean result = natServerResolver.editNatServerMapping(serverMappingList);
+        boolean result = natServerResolver.editNatServerMapping(Collections.singletonList(mapping));
         System.out.println("执行结果是：" + result);
         Assertions.assertTrue(result);
     }
@@ -101,11 +95,10 @@ class NatServerResolverTest {
     @Order(4)
     @DisplayName("删除NAT Server")
     void deleteNatServerMapping() throws IOException {
-        List<ServerMapping> serverMappingList = new ArrayList<>();
         //删除名称为「test_by_code」的服务器映射
-        serverMappingList.add(new ServerMapping("test_by_code_nat", DefaultVsysEnums.PUBLIC.getCode()));
+        ServerMapping deleteMapping = new ServerMapping("test_by_code_nat", DefaultVsysEnums.PUBLIC.getCode());
 
-        boolean result = natServerResolver.deleteNatServerMapping(serverMappingList);
+        boolean result = natServerResolver.deleteNatServerMapping(Collections.singletonList(deleteMapping));
         System.out.println("执行结果是：" + result);
         Assertions.assertTrue(result);
     }

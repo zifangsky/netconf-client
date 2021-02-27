@@ -48,4 +48,31 @@ public class ServiceItems {
      */
     @JacksonXmlProperty(localName = "protocol")
     private Protocol protocol;
+
+    public ServiceItems() {
+    }
+
+    public ServiceItems(Tcp tcp) {
+        this.tcp = tcp;
+    }
+
+    public ServiceItems(Udp udp) {
+        this.udp = udp;
+    }
+
+    public ServiceItems(Sctp sctp) {
+        this.sctp = sctp;
+    }
+
+    public ServiceItems(IcmpItem icmpItem) {
+        this.icmpItem = icmpItem;
+    }
+
+    public ServiceItems(Icmp6Item icmp6Item) {
+        this.icmp6Item = icmp6Item;
+    }
+
+    public ServiceItems(Protocol protocol) {
+        this.protocol = protocol;
+    }
 }

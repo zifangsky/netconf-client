@@ -35,4 +35,21 @@ public class VirtualSystem {
      */
     @JacksonXmlProperty(localName = "static-policy-group")
     private StaticPolicyGroup staticPolicyGroup;
+
+    public VirtualSystem() {
+    }
+
+    public VirtualSystem(String name) {
+        this.name = name;
+    }
+
+    public VirtualSystem(String name, DefaultPolicy defaultPolicy) {
+        this.name = name;
+        this.defaultPolicy = defaultPolicy;
+    }
+
+    public VirtualSystem(String name, StaticPolicy staticPolicy) {
+        this.name = name;
+        this.staticPolicy = staticPolicy;
+    }
 }
