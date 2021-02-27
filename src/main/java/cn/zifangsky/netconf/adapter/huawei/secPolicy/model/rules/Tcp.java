@@ -13,6 +13,11 @@ import lombok.Data;
 @Data
 public class Tcp {
     /**
+     * 默认的源端口，等效于：0 to 65535
+     */
+    public static final String DEFAULT_SOURCE_PORT = "";
+
+    /**
      * 表示指定TCP的源端口。如<source-port>100 200 to 300</source-port>，表示指定源端口为100、200到300之间所有端口。
      */
     @JacksonXmlProperty(localName = "source-port")
@@ -25,6 +30,10 @@ public class Tcp {
     private String destPort;
 
     public Tcp() {
+    }
+
+    public Tcp(String destPort) {
+        this(DEFAULT_SOURCE_PORT, destPort);
     }
 
     public Tcp(String sourcePort, String destPort) {

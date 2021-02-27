@@ -452,5 +452,10 @@ public class NetconfSession {
         if(ok || (errorSeverity == null)){
             this.lastReplyIsSuccess = true;
         }
+        //如果当前请求发生异常，则打印错误信息
+        else {
+            log.error("There are some errors in this RPC request, the following is the original message returned by the NETCONF Server:");
+            log.error(xml);
+        }
     }
 }

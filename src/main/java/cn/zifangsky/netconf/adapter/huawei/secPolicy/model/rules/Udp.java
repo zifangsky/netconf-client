@@ -13,6 +13,11 @@ import lombok.Data;
 @Data
 public class Udp {
     /**
+     * 默认的源端口，等效于：0 to 65535
+     */
+    public static final String DEFAULT_SOURCE_PORT = "";
+
+    /**
      * 表示指定UDP的源端口。如<source-port>100 200 to 300</source-port>，表示指定源端口为100、200到300之间所有端口。
      */
     @JacksonXmlProperty(localName = "source-port")
@@ -25,6 +30,10 @@ public class Udp {
     private String destPort;
 
     public Udp() {
+    }
+
+    public Udp(String destPort) {
+        this(DEFAULT_SOURCE_PORT, destPort);
     }
 
     public Udp(String sourcePort, String destPort) {

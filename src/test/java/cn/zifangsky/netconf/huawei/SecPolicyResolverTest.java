@@ -55,7 +55,9 @@ class SecPolicyResolverTest {
     @Order(1)
     @DisplayName("创建安全策略")
     void createSecPolicy() throws IOException {
-        ServiceItems item = new ServiceItems(new Tcp("100 200 to 300 600", "700 888 to 999 1023"));
+        //只设置目的端口
+        ServiceItems item = new ServiceItems(new Tcp("700 888 to 999 1023"));
+//        ServiceItems item = new ServiceItems(new Tcp("100 200 to 300 600", "700 888 to 999 1023"));
         //如果希望端口设置为 any，则 new Service() 即可；如果希望不设置安全区域，则将对应字段设置为空即可
 //        Rule newRule = new Rule("test_by_code_sec_policy", "通过程序自动下发配置", ActionEnums.TRUE, null, null,
 //                new Address("1.1.1.1/32", true), new Address("1.1.1.2/32", true), new Service());
@@ -75,6 +77,9 @@ class SecPolicyResolverTest {
         System.out.println("执行结果是：" + result);
         Assertions.assertTrue(result);
     }
+
+
+
 
     /**
      * 修改安全策略
