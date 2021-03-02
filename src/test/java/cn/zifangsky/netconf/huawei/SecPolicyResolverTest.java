@@ -69,7 +69,7 @@ class SecPolicyResolverTest {
 //                new Address("1.1.1.1/32", true), new Address("1.1.1.2/32", true), new Service(Arrays.asList("smtp", "smtps")));
 
         //一条新策略
-        Rule newRule = new Rule("test_by_code_sec_policy", "通过程序自动下发配置", ActionEnums.TRUE, "untrust", "trust",
+        Rule newRule = new Rule("test_by_code_sec_policy", "通过程序自动下发配置", ActionEnums.TRUE, Collections.singletonList("untrust"), Collections.singletonList("trust"),
                 new Address(Arrays.asList("1.1.1.1", "10.1.1.0/24"), true), new Address(Collections.singletonList("1.1.1.2/32"), true), new Service(item));
         newRule.setParentGroup("策略组B");
 
@@ -92,7 +92,7 @@ class SecPolicyResolverTest {
         //已有的一条策略
         ServiceItems item = new ServiceItems(new Tcp("100 200 to 300 600", "700 888 to 999 1023 to 1030"));
         //保持名称不变
-        Rule rule = new Rule("test_by_code_sec_policy", "通过程序自动修改配置", ActionEnums.FALSE, "untrust", "trust",
+        Rule rule = new Rule("test_by_code_sec_policy", "通过程序自动修改配置", ActionEnums.FALSE, Collections.singletonList("untrust"), Collections.singletonList("trust"),
                 new Address(Arrays.asList("1.1.1.1/32", "10.1.1.0/24"), true), new Address(Collections.singletonList("1.1.1.2/32"), true), new Service(item));
 
         StaticPolicy staticPolicy = new StaticPolicy(Collections.singletonList(rule));

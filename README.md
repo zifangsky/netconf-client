@@ -555,7 +555,7 @@ private static final String TEST_USERNAME = "netconf";
 private static final String TEST_PASSWORD = "admin123456";
 private static final int DEFAULT_NETCONF_PORT = 830;
 
-private static DefaultRpcManager rpcManager;
+private static RpcManager rpcManager;
 
 @BeforeAll
 public static void init() throws NetconfException {

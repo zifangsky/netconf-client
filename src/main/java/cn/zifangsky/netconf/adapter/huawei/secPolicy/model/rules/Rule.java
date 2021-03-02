@@ -1,8 +1,11 @@
 package cn.zifangsky.netconf.adapter.huawei.secPolicy.model.rules;
 
 import cn.zifangsky.netconf.adapter.huawei.ActionEnums;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * <p>表示安全策略的规则，仅用于容纳子节点，自身无数据意义。</p>
@@ -55,13 +58,15 @@ public class Rule {
      * 表示安全策略规则引用的源安全区域的名称，为可选项。源安全区域是指流量发出的安全区域。安全区域包括系统缺省存在和用户自定义的安全区域。
      */
     @JacksonXmlProperty(localName = "source-zone")
-    private String sourceZone;
+    @JacksonXmlElementWrapper(useWrapping = false)
+    private List<String> sourceZone;
 
     /**
      * 表示安全策略规则引用的目的安全区域的名称，为可选项。目的安全区域是指流量去往的安全区域。安全区域包括系统缺省存在和用户自定义的安全区域。
      */
     @JacksonXmlProperty(localName = "destination-zone")
-    private String destinationZone;
+    @JacksonXmlElementWrapper(useWrapping = false)
+    private List<String> destinationZone;
 
     /**
      * 表示安全策略的规则引用的源地址信息，该节点仅用于容纳子节点，自身无数据意义，一条安全规则中最多只能出现1次，可选项。该节点的子节点可以是IP地址、IP地址（组）对象、IP地址段、MAC地址。
@@ -142,7 +147,7 @@ public class Rule {
         this.name = name;
     }
 
-    public Rule(String name, String desc, ActionEnums action, String sourceZone, String destinationZone, Address sourceIp, Address destinationIp, Service service) {
+    public Rule(String name, String desc, ActionEnums action, List<String> sourceZone, List<String> destinationZone, Address sourceIp, Address destinationIp, Service service) {
         this.name = name;
         this.desc = desc;
         this.action = action;
