@@ -132,4 +132,13 @@ public enum ProtocolEnums {
         }
         return null;
     }
+
+    public static ProtocolEnums fromName(String name){
+        for(ProtocolEnums e : values()){
+            if(e.name.equals(name)){
+                return e;
+            }
+        }
+        return null;
+    }
 }
