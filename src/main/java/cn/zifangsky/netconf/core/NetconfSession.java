@@ -88,6 +88,7 @@ public class NetconfSession {
     private final int commandTimeout;
     /**
      * 上一条命令的执行结果
+     * //TODO 线程安全问题优化
      */
     private String lastRpcReply;
     /**
@@ -442,8 +443,18 @@ public class NetconfSession {
 
         if(errorSeverity != null){
             switch (errorSeverity) {
-                case "error": this.lastReplyHasError = true; break;
-                case "warning": this.lastReplyHasWarning = true; break;
+                case "error": {
+                    this.lastReplyIsSuccess = false;
+                    this.lastReplyHasError = true;
+                    this.lastReplyHasWarning = false;
+                    break;
+                }
+                case "warning": {
+                    this.lastReplyIsSuccess = false;
+                    this.lastReplyHasError = false;
+                    this.lastReplyHasWarning = true;
+                    break;
+                }
                 default:
             }
         }
@@ -451,6 +462,8 @@ public class NetconfSession {
         //返回执行成功标识，或者没有返回错误信息
         if(ok || (errorSeverity == null)){
             this.lastReplyIsSuccess = true;
+            this.lastReplyHasError = false;
+            this.lastReplyHasWarning = false;
         }
         //如果当前请求发生异常，则打印错误信息
         else {

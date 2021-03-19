@@ -34,8 +34,8 @@ public abstract class AbstractRoutingRpcManager implements RpcManager {
     }
 
     public AbstractRoutingRpcManager(Map<Object, Device> targetDevices, Device defaultDevice) {
-        if(targetDevices == null || defaultDevice == null){
-            throw new IllegalArgumentException("Parameter 'targetDevices' or 'defaultDevice' cannot be empty.");
+        if(targetDevices == null){
+            throw new IllegalArgumentException("Parameter 'targetDevices' cannot be empty.");
         }
 
         this.afterPropertiesSet(targetDevices, defaultDevice);
@@ -57,28 +57,6 @@ public abstract class AbstractRoutingRpcManager implements RpcManager {
         if(defaultDevice != null){
             this.defaultDevice = this.resolveSpecifiedDevice(defaultDevice);
         }
-    }
-
-    /**
-     * 获取{@link #targetDevices}
-     * @author zifangsky
-     * @date 2021/2/27
-     * @since 1.0.0
-     * @return java.util.Map<java.lang.Object,cn.zifangsky.netconf.core.Device>
-     */
-    public Map<Object, Device> getTargetDevices() {
-        return this.targetDevices;
-    }
-
-    /**
-     * 获取{@link #defaultDevice}
-     * @author zifangsky
-     * @date 2021/2/27
-     * @since 1.0.0
-     * @return cn.zifangsky.netconf.core.Device
-     */
-    public Device getDefaultDevice() {
-        return defaultDevice;
     }
     
     /**
@@ -103,7 +81,7 @@ public abstract class AbstractRoutingRpcManager implements RpcManager {
      * @since 1.0.0
      * @return cn.zifangsky.netconf.core.Device
      */
-    protected Device determineTargetDevice() throws NetconfException {
+    protected synchronized Device determineTargetDevice() throws NetconfException {
         //1. 抉择当前需要使用的 lookup key
         Object lookupKey = this.determineCurrentLookupKey();
 
@@ -165,5 +143,35 @@ public abstract class AbstractRoutingRpcManager implements RpcManager {
         }else {
             throw new IllegalArgumentException("Illegal data source value - only [cn.zifangsky.netconf.core.Device] and String supported: " + device);
         }
+    }
+
+    /**
+     * 获取{@link #targetDevices}
+     * @author zifangsky
+     * @date 2021/2/27
+     * @since 1.0.0
+     * @return java.util.Map<java.lang.Object,cn.zifangsky.netconf.core.Device>
+     */
+    public Map<Object, Device> getTargetDevices() {
+        return this.targetDevices;
+    }
+
+    /**
+     * 获取{@link #defaultDevice}
+     * @author zifangsky
+     * @date 2021/2/27
+     * @since 1.0.0
+     * @return cn.zifangsky.netconf.core.Device
+     */
+    public Device getDefaultDevice() {
+        return defaultDevice;
+    }
+
+    public void setTargetDevices(Map<Object, Device> targetDevices) {
+        this.targetDevices = targetDevices;
+    }
+
+    public void setDefaultDevice(Device defaultDevice) {
+        this.defaultDevice = defaultDevice;
     }
 }

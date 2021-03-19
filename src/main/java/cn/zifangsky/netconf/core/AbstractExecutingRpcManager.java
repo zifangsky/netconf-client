@@ -5,6 +5,7 @@ import cn.zifangsky.netconf.core.enums.ErrorOptionEnums;
 import cn.zifangsky.netconf.core.enums.TargetEnums;
 import cn.zifangsky.netconf.core.enums.TestOptionEnums;
 import cn.zifangsky.netconf.core.model.HelloRpc;
+import cn.zifangsky.netconf.core.model.RpcError;
 import cn.zifangsky.netconf.core.model.RpcReply;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -416,11 +417,29 @@ public abstract class AbstractExecutingRpcManager extends AbstractRoutingRpcMana
         return false;
     }
 
+    @Override
+    public RpcError getLastRpcErrorDetails() throws IOException {
+        Device device = this.determineTargetDevice();
+
+        //如果上次执行没有失败，则直接返回
+        if(!device.lastReplyHasError()){
+            return null;
+        }
+
+        //反序列化上次执行结果
+        RpcReply<Void> rpcReply = this.getCommonRpcReply(device.getLastRpcReply());
+        if(rpcReply == null){
+            return null;
+        }
+        //返回错误详情
+        return rpcReply.getError();
+    }
+
     /**
      * 检查普通rpc报文的返回
      */
     private boolean checkCommonRpcReply(String xml) throws JsonProcessingException {
-        RpcReply<Void> rpcReply = XMLMAPPER_RESOURCES.get().readValue(xml, new TypeReference<RpcReply<Void>>() {});
+        RpcReply<Void> rpcReply = this.getCommonRpcReply(xml);
         if(rpcReply == null){
             return false;
         }
@@ -444,5 +463,12 @@ public abstract class AbstractExecutingRpcManager extends AbstractRoutingRpcMana
         }
 
         return rpcReply.getSessionId() != null;
+    }
+
+    /**
+     * 反序列化普通rpc报文的返回
+     */
+    private RpcReply<Void> getCommonRpcReply(String xml) throws JsonProcessingException {
+        return XMLMAPPER_RESOURCES.get().readValue(xml, new TypeReference<RpcReply<Void>>() {});
     }
 }

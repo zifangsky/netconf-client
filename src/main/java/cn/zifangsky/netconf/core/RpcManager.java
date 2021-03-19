@@ -4,6 +4,7 @@ import cn.zifangsky.netconf.core.enums.DefaultOperationEnums;
 import cn.zifangsky.netconf.core.enums.ErrorOptionEnums;
 import cn.zifangsky.netconf.core.enums.TargetEnums;
 import cn.zifangsky.netconf.core.enums.TestOptionEnums;
+import cn.zifangsky.netconf.core.model.RpcError;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -522,4 +523,14 @@ public interface RpcManager {
      * @throws IOException If there are errors communicating with the netconf server.
      */
     boolean checkIsSuccess(String rpcReply) throws IOException;
+
+    /**
+     * 获取当前线程上个失败的错误详情
+     * @author zifangsky
+     * @date 2021/3/19
+     * @since 1.0.0
+     * @return cn.zifangsky.netconf.core.model.RpcError
+     * @throws IOException If there are errors communicating with the netconf server.
+     */
+    RpcError getLastRpcErrorDetails() throws IOException;
 }
