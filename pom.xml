@@ -7,7 +7,7 @@
 
     <groupId>cn.zifangsky</groupId>
     <artifactId>netconf-client</artifactId>
-    <version>0.9.0</version>
+    <version>0.9.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>${project.groupId}:${project.artifactId}</name>
@@ -268,4 +268,17 @@
             </plugin>
         </plugins>
     </reporting>
+
+    <!-- 发布管理 -->
+    <distributionManagement>
+        <snapshotRepository>
+            <!-- 这里的id必须要和全局配置中server节点的id保持一致 -->
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
 </project>
