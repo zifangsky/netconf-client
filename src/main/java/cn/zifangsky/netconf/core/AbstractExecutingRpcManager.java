@@ -32,7 +32,7 @@ import static cn.zifangsky.netconf.core.NetconfSession.HELLO_RPC_REPLY_FLAG;
  * @since 1.0.0
  */
 @Slf4j
-public abstract class AbstractExecutingRpcManager extends AbstractRoutingRpcManager {
+public abstract class AbstractExecutingRpcManager extends AbstractRoutingRpcManager implements AutoCloseable {
     public static final ThreadLocal<XmlMapper> XMLMAPPER_RESOURCES = ThreadLocal.withInitial(() -> {
         XmlMapper xmlMapper = new XmlMapper();
         xmlMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
@@ -433,6 +433,24 @@ public abstract class AbstractExecutingRpcManager extends AbstractRoutingRpcMana
         }
         //返回错误详情
         return rpcReply.getError();
+    }
+
+    /**
+     * 关闭 Netconf 连接
+     */
+    @Override
+    public void close() {
+        this.doClose();
+    }
+
+    @Override
+    public void doClose() {
+        try {
+            Device device = this.determineTargetDevice();
+            device.doClose();
+        }catch (Exception e){
+            //ignore
+        }
     }
 
     /**

@@ -533,4 +533,9 @@ public interface RpcManager {
      * @throws IOException If there are errors communicating with the netconf server.
      */
     RpcError getLastRpcErrorDetails() throws IOException;
+
+    /**
+     * 关闭 Netconf 连接
+     */
+    void doClose();
 }

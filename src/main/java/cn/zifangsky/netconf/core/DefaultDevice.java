@@ -180,19 +180,6 @@ public class DefaultDevice implements Device, AutoCloseable {
     }
 
     /**
-     * 关闭 Netconf 连接
-     */
-    @Override
-    public void close() {
-        if (isChannelConnected()) {
-            sshChannel.disconnect();
-        }
-        if (isSessionConnected()) {
-            sshSession.disconnect();
-        }
-    }
-
-    /**
      * 返回最后一个返回报文
      *
      * @return Last RPC reply, as a string.
@@ -318,6 +305,24 @@ public class DefaultDevice implements Device, AutoCloseable {
     public BufferedReader executeRpcRunning(String rpcContent) throws IOException {
         this.checkNetConfSessionEstablished();
         return this.netconfSession.executeRpcRunning(rpcContent);
+    }
+
+    /**
+     * 关闭 Netconf 连接
+     */
+    @Override
+    public void close() {
+        this.doClose();
+    }
+
+    @Override
+    public void doClose() {
+        if (isChannelConnected()) {
+            sshChannel.disconnect();
+        }
+        if (isSessionConnected()) {
+            sshSession.disconnect();
+        }
     }
 
     /**

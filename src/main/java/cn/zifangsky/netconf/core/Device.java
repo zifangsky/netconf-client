@@ -105,4 +105,9 @@ public interface Device {
      * @throws java.io.IOException if there are errors communicating with the Netconf server.
      */
     BufferedReader executeRpcRunning(String rpcContent) throws IOException;
+
+    /**
+     * 关闭 Netconf 连接
+     */
+    void doClose();
 }
