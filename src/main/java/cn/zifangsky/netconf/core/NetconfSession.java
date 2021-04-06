@@ -209,7 +209,7 @@ public class NetconfSession {
      * @return RPC reply sent by Netconf server
      * @throws java.io.IOException      If there are issues communicating with the netconf server.
      */
-    public String executeRpc(String rpcContent) throws IOException {
+    public synchronized String executeRpc(String rpcContent) throws IOException {
         String rpcReply = this.getRpcReply(this.wrapRpcTag(rpcContent));
 
         this.updateLastRpcReply(rpcReply);
@@ -271,7 +271,7 @@ public class NetconfSession {
     /**
      * 发送hello报文
      */
-    private void sendHello(String hello) throws IOException {
+    private synchronized void sendHello(String hello) throws IOException {
         String reply = this.getRpcReply(hello);
         this.updateLastRpcReply(reply);
     }
@@ -394,7 +394,7 @@ public class NetconfSession {
     /**
      * 更新lastRpcReply
      */
-    private synchronized void updateLastRpcReply(String xml) throws JsonProcessingException {
+    private void updateLastRpcReply(String xml) throws JsonProcessingException {
         if(StringUtils.isBlank(xml)){
             return;
         }
