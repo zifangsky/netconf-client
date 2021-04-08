@@ -1,7 +1,11 @@
 package cn.zifangsky.netconf.adapter.huawei.securityZone.model;
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import lombok.Data;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * 安全区域实例
@@ -40,7 +44,8 @@ public class ZoneInstance {
      * 表示加入安全域的接口。
      */
     @JacksonXmlProperty(localName = "assign-interface")
-    private String assignInterface;
+    @JacksonXmlElementWrapper(useWrapping = false)
+    private List<String> assignInterface;
 
     public ZoneInstance() {
     }
@@ -51,6 +56,14 @@ public class ZoneInstance {
     }
 
     public ZoneInstance(String name, String vsys, String desc, Integer priority, String assignInterface) {
+        this.name = name;
+        this.vsys = vsys;
+        this.desc = desc;
+        this.priority = priority;
+        this.assignInterface = Collections.singletonList(assignInterface);
+    }
+
+    public ZoneInstance(String name, String vsys, String desc, Integer priority, List<String> assignInterface) {
         this.name = name;
         this.vsys = vsys;
         this.desc = desc;

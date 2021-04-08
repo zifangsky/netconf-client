@@ -22,7 +22,7 @@ To report bug-fixes, issues, suggestions, please visit [Issues](https://github.c
 <dependency>
     <groupId>cn.zifangsky</groupId>
     <artifactId>netconf-client</artifactId>
-    <version>0.9.1-SNAPSHOT</version>
+    <version>0.9.3-SNAPSHOT</version>
 </dependency>
 ```
 
