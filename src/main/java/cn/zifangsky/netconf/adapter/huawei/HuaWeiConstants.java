@@ -32,4 +32,9 @@ public class HuaWeiConstants {
      * 安全区域
      */
     public static final String URN_HUAWEI_SECURITY_ZONE = "urn:huawei:params:xml:ns:yang:huawei-security-zone";
+
+    /**
+     * 系统相关
+     */
+    public static final String URN_HUAWEI_SYSTEM = "urn:huawei:params:xml:ns:yang:huawei-system";
 }

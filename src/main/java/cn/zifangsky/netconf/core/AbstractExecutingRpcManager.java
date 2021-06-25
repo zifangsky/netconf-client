@@ -9,7 +9,9 @@ import cn.zifangsky.netconf.core.model.RpcError;
 import cn.zifangsky.netconf.core.model.RpcReply;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -35,6 +37,11 @@ import static cn.zifangsky.netconf.core.NetconfSession.HELLO_RPC_REPLY_FLAG;
 public abstract class AbstractExecutingRpcManager extends AbstractRoutingRpcManager implements AutoCloseable {
     public static final ThreadLocal<XmlMapper> XMLMAPPER_RESOURCES = ThreadLocal.withInitial(() -> {
         XmlMapper xmlMapper = new XmlMapper();
+        //允许忽略不存在的字段
+        xmlMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        //允许特殊字符
+        xmlMapper.enable(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS.mappedFeature());
+        //属性值为Null时不参与序列化
         xmlMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         return xmlMapper;
     });
