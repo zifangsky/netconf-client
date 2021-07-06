@@ -377,8 +377,8 @@ public class DefaultDevice implements Device, AutoCloseable {
 
             //1. ssh连接
             if (keyBasedAuthentication) {
-                sshSession = loginWithPrivateKey(connectionTimeout);
                 loadPrivateKey();
+                sshSession = loginWithPrivateKey(connectionTimeout);
             } else {
                 sshSession = loginWithUserPass(connectionTimeout);
             }
@@ -401,7 +401,7 @@ public class DefaultDevice implements Device, AutoCloseable {
             sshChannel.setSubsystem("netconf");
             return new NetconfSession(sshChannel, connectionTimeout, commandTimeout, this.netConfCapabilities);
         } catch (JSchException | IOException e) {
-            throw new NetconfException("Failed to create Netconf session:" + e.getMessage());
+            throw new NetconfException("Failed to create Netconf session:", e);
         }
     }
 
@@ -412,7 +412,7 @@ public class DefaultDevice implements Device, AutoCloseable {
         try {
             Session session = sshClient.getSession(userName, hostName, port);
             session.setConfig("userauth", "password");
-            session.setConfig("StrictHostKeyChecking", "no");
+            session.setConfig("StrictHostKeyChecking", isStrictHostKeyChecking() ? "yes" : "no");
             session.setPassword(password);
             session.connect(timeoutMilliSeconds);
             return session;
@@ -429,12 +429,12 @@ public class DefaultDevice implements Device, AutoCloseable {
         try {
             Session session = sshClient.getSession(userName, hostName, port);
             session.setConfig("userauth", "publickey");
-            session.setConfig("StrictHostKeyChecking", "no");
+            session.setConfig("StrictHostKeyChecking", isStrictHostKeyChecking() ? "yes" : "no");
             session.connect(timeoutMilliSeconds);
             return session;
         } catch (JSchException e) {
-            throw new NetconfException(String.format("Error using key pair file: %s to connect to host: %s - Error: %s",
-                    pemKeyFile, hostName, e.getMessage()));
+            throw new NetconfException(String.format("Error using key pair file: %s to connect to host: %s",
+                    pemKeyFile, hostName), e);
         }
     }
 

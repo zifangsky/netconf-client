@@ -72,8 +72,8 @@ public class NetconfSession {
      */
     public static final String RPC_NULL_TREE_FLAG = "<rpc/>";
 
-    private InputStream stdInStreamFromDevice;
-    private OutputStream stdOutStreamToDevice;
+    private final InputStream stdInStreamFromDevice;
+    private final OutputStream stdOutStreamToDevice;
     /**
      * NETCONF Server返回的capabilities
      */
@@ -88,7 +88,6 @@ public class NetconfSession {
     private final int commandTimeout;
     /**
      * 上一条命令的执行结果
-     * //TODO 线程安全问题优化
      */
     private String lastRpcReply;
     /**

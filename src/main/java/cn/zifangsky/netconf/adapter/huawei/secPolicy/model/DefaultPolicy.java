@@ -31,7 +31,7 @@ public class DefaultPolicy {
     private Boolean sessionLog;
 
     /**
-     * TODO：接口文档没有该字段含义
+     * 注：接口文档没有该字段含义
      */
     @JacksonXmlProperty(localName = "global-ip")
     private GlobalIp globalIp;
