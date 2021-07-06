@@ -1,11 +1,9 @@
 package cn.zifangsky.netconf.adapter.huawei.save;
 
-import cn.zifangsky.netconf.adapter.huawei.DefaultVsysEnums;
 import cn.zifangsky.netconf.adapter.huawei.HuaWeiConstants;
 import cn.zifangsky.netconf.adapter.huawei.save.model.Save;
 import cn.zifangsky.netconf.core.NetconfConstants;
 import cn.zifangsky.netconf.core.RpcManager;
-import cn.zifangsky.netconf.core.enums.TargetEnums;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
@@ -52,22 +50,17 @@ public class SaveResolverImpl implements SaveResolver {
 
     @Override
     public boolean save(String fileName) throws IOException {
-        return this.save(DefaultVsysEnums.PUBLIC.getCode(), fileName);
-    }
-
-    @Override
-    public boolean save(String vsys, String fileName) throws IOException {
-        if(StringUtils.isBlank(vsys) || StringUtils.isBlank(fileName)){
+        if(StringUtils.isBlank(fileName)){
             return false;
         }
 
-        Save save = new Save(vsys, fileName);
+        Save save = new Save(fileName);
         String xmlStr = XMLMAPPER_RESOURCES.get().writeValueAsString(save);
         //1. 添加 namespace
         xmlStr = this.addNamespaceForSecurityZone(xmlStr);
 
         //2. 保存配置
-        String rpcReply = this.rpcManager.getConfig(TargetEnums.RUNNING, xmlStr);
+        String rpcReply = this.rpcManager.executeRpc(xmlStr);
 
         //3. 返回执行结果
         return this.rpcManager.checkIsSuccess(rpcReply);

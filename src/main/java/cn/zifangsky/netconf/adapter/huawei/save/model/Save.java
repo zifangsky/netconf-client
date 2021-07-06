@@ -25,19 +25,12 @@ public class Save {
     private String save = "";
 
     /**
-     * VSYS名字
-     */
-    @JacksonXmlProperty(localName = "vsys")
-    private String vsys;
-
-    /**
      * 配置文件名字，比如：当前配置保存到名字为vsys1.cfg的配置文件中
      */
     @JacksonXmlProperty(localName = "file-name")
     private String fileName;
 
-    public Save(String vsys, String fileName) {
-        this.vsys = vsys;
+    public Save(String fileName) {
         this.fileName = fileName;
     }
 }
